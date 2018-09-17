@@ -556,3 +556,29 @@ footer {
   border: none;
   transition: .3s ease-in-out;
 }
+
+.viewProfileButton{
+  background: transparent;
+  color: #0067db;
+  border-radius:30px 30px;
+  border-color: #e6e6e6;
+  font-size: medium;
+  padding: 3%;
+
+}
+.viewProfileButton:hover{
+  background: transparent;
+  color: #0067db;
+  border-radius:30px 30px;
+}
+
+.roundcornerbutton{
+  border-radius:30px 30px;
+  font-size: medium;
+
+}
+
+.text-center::before{
+  content:"";
+  margin-left:calc(100% - 75%);
+} 

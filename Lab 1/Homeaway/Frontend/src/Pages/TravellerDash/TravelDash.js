@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import "react-dates/initialize";
-import Profile from "../../Modules/Headers/ProfileHeader"
+import Profile from "../../Modules/Headers/ProfileHeader";
 class TravelDash extends Component {
   constructor(props, context) {
     super(props, context);
@@ -10,7 +10,10 @@ class TravelDash extends Component {
     this.state = {
       one: "",
       two: "",
-      three: ""
+      three: "",
+      showProfile: false,
+      showAccount: false,
+      showMyTrips: true
     };
   }
 
@@ -19,19 +22,28 @@ class TravelDash extends Component {
       this.setState({
         one: "one",
         two: "",
-        three: ""
+        three: "",
+        showProfile: false,
+        showAccount: false,
+        showMyTrips: true
       });
     } else if (event.currentTarget.dataset.id === "2") {
       this.setState({
         one: "",
         two: "two",
-        three: ""
+        three: "",
+        showProfile: true,
+        showAccount: false,
+        showMyTrips: false
       });
     } else if (event.currentTarget.dataset.id === "3") {
       this.setState({
         one: "",
         two: "",
-        three: "three"
+        three: "three",
+        showProfile: false,
+        showAccount: true,
+        showMyTrips: false
       });
     }
     console.log(event.currentTarget.dataset.id);
@@ -85,13 +97,8 @@ class TravelDash extends Component {
             <hr className="bar" />
           </ul>
         </div>
-
-      <Profile/>
+        {this.state.showProfile ? <Profile /> : "Website Under Construction"}
       </div>
-
-
-
-
     );
   }
 }
