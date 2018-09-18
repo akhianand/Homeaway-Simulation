@@ -1,6 +1,9 @@
 import React, { Component } from "react";
 import "react-dates/initialize";
 import Profile from "../../Modules/Headers/ProfileHeader";
+import cookie from 'react-cookies';
+import { Redirect } from "react-router";
+
 class TravelDash extends Component {
   constructor(props, context) {
     super(props, context);
@@ -50,8 +53,13 @@ class TravelDash extends Component {
   }
 
   render() {
+    let redirectVar = null;
+    if(!cookie.load('cookie')){
+      redirectVar = <Redirect to= "/Login"/>
+  }
     return (
       <div>
+        {redirectVar}
         <nav
           className="navbar  navbar-light fixed-top  p-3 mb-5 bg-white"
           id="dashNav"
@@ -90,7 +98,7 @@ class TravelDash extends Component {
             <li
               onClick={this.handleCheck.bind(this)}
               data-id="3"
-              class={this.state.three}
+              className={this.state.three}
             >
               <a>Account</a>
             </li>

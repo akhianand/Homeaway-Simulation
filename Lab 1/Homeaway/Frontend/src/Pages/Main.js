@@ -14,11 +14,10 @@ class Main extends Component {
                 <Route path="/Login" component={Login}/>
                 <Route path="/SignUp" component={SignUp}/>
                 <Route path="/TravelDash" component={TravelDash}/>
-
             </div>
         )
     }
-}
+}   
 //Export The Main Component
 export default Main;
 
