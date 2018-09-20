@@ -3,6 +3,8 @@ import "react-dates/initialize";
 import Profile from "../../Modules/Headers/ProfileHeader";
 import cookie from 'react-cookies';
 import { Redirect } from "react-router";
+import AccountHeader from "../../Modules/Headers/AccountHeader";
+
 
 class TravelDash extends Component {
   constructor(props, context) {
@@ -105,7 +107,9 @@ class TravelDash extends Component {
             <hr className="bar" />
           </ul>
         </div>
-        {this.state.showProfile ? <Profile /> : "Website Under Construction"}
+        {this.state.showProfile ? <Profile /> : null}
+        {this.state.showAccount ? <AccountHeader /> : null}
+
       </div>
     );
   }

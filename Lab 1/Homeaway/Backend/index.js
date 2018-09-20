@@ -2,7 +2,7 @@
                                                 Initializations             
 -----------------------------------------------------------------------------------------------------------*/
 var mysql = require("mysql");
-var bcrypt = require("bcrypt");
+var bcrypt = require("bcryptjs");
 var express = require("express");
 var app = express();
 var bodyParser = require("body-parser");

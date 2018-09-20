@@ -569,6 +569,7 @@ footer {
 .viewProfileButton:hover{
   background: transparent;
   color: #0067db;
+
   border-radius:30px 30px;
 }
 
@@ -582,3 +583,47 @@ footer {
   content:"";
   margin-left:calc(100% - 75%);
 } 
+
+.somePaddingforButtons{
+  padding: 10%;
+  padding-left: 30%;
+  padding-Right: 30%;
+
+}
+
+.OwnerBulletless li {
+  list-style-type: none;
+  padding: 10%;
+} 
+
+
+.dottedbox { border: dotted 1px #e6e6e6;  }
+
+
+.bulletIncreaseSize { 
+  color: #0067db;
+  font-size: 25px;
+  }
+
+
+  .imagelist li {
+    list-style: none;
+    padding: 1%;
+    display:inline-block;
+}
+
+.dropzone {
+  width : 100%;
+  height : 50%;
+  border : 5px dashed #e6e6e6;
+}
+
+.resize {
+  width:100px; /* you can use % */
+  height: auto;
+}
+
+.resizeModal{
+  width:800px; /* you can use % */
+  height: auto;
+}
