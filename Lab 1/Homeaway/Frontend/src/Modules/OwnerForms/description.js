@@ -1,24 +1,21 @@
 import React, { Component } from "react";
-import "react-dates/initialize";
-import Profile from "../../Modules/Headers/ProfileHeader";
-import cookie from "react-cookies";
-import { Redirect } from "react-router";
-import AccountHeader from "../../Modules/Headers/AccountHeader";
+
 
 class DescriptionForm extends Component {
   constructor(props, context) {
     super(props, context);
+    let l = this.props.description.length;
 
     this.state = {
-      headline: "",
-      description: "",
-      placetype: "",
-      bedrooms: 0,
-      bathrooms: 0,
-      cahrsleft: 200,
-      accomdates:0
+      headline: this.props.headline,
+      description: this.props.description,
+      placetype: this.props.placetype,
+      bedrooms: this.props.bedrooms,
+      bathrooms: this.props.bathrooms,
+      cahrsleft: 200-l,
+      accomdates: this.props.accomdates
     };
-
+  
     this.headlineChangeHandler = this.headlineChangeHandler.bind(this);
     this.descriptionChangeHandler = this.descriptionChangeHandler.bind(this);
     this.placetypeChangeHandler = this.placetypeChangeHandler.bind(this);
@@ -27,10 +24,14 @@ class DescriptionForm extends Component {
     this.accomdatesChangeHandler = this.accomdatesChangeHandler.bind(this);
 
   }
+
+  
+
   headlineChangeHandler = e => {
     this.setState({
       headline: e.target.value
     });
+    this.props.onHeadlineChange(e.target.value);
   };
 
   descriptionChangeHandler = e => {
@@ -40,12 +41,16 @@ class DescriptionForm extends Component {
       description: e.target.value,
       cahrsleft: leftl
     });
+    this.props.onDescriptionChange(e.target.value);
+
   };
 
   placetypeChangeHandler = e => {
     this.setState({
       placetype: e.target.value
     });
+    this.props.onPlaceTypeChange(e.target.value);
+
   };
 
   bedroomChangeHandler = e => {
@@ -56,6 +61,8 @@ class DescriptionForm extends Component {
     this.setState({
       bedrooms: bedroomVal
     });
+    this.props.onBedroomChange(e.target.value);
+
   };
 
   bathroomChangeHandler = e => {
@@ -66,6 +73,8 @@ class DescriptionForm extends Component {
     this.setState({
       bathrooms: bathroomVal
     });
+    this.props.onBathroomChange(e.target.value);
+
   };
 
   accomdatesChangeHandler = e => {
@@ -76,6 +85,8 @@ class DescriptionForm extends Component {
     this.setState({
       accomdates: accomodatesVal
     });
+    this.props.onAccomodatesChange(e.target.value);
+
   };
 
   render() {
@@ -210,9 +221,7 @@ class DescriptionForm extends Component {
                   <br />
                   <br />
                   <br />
-                  <span className="text-danger">
-                    Hit Back/Next to Save your progress
-                  </span>
+               
                   <hr />
                 </div>
               </div>

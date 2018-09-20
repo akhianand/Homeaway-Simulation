@@ -43,6 +43,7 @@ class AvailabilityForm extends Component {
                     />
            
            <br/><br/><br/><br/>
+         
                           <hr />
 
               <div className="row">

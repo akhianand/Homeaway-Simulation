@@ -134,9 +134,7 @@ class AddressForm extends Component {
                   <br />
                   <br />
                   <br />
-                  <span className="text-danger">
-                    Hit Next to Save your progress
-                  </span>
+             
                   <hr />
                 </div>
               </div>
