@@ -9,7 +9,7 @@ class Login extends Component {
       <div>
       
       <LoginNav/>
-      <LoginHeader/>
+      <LoginHeader isOwner={false} isTraveller={true}/>
 
       </div>
       

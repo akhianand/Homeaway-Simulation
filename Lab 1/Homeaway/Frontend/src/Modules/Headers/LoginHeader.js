@@ -13,13 +13,17 @@ class LoginHeader extends Component {
       password: "",
       userLoggedIn: false,
       userLoginError: false,
-      userErrorMessage: ""
+      userErrorMessage: "",
+      isTraveller:this.props.isTraveller,
+      isOwner:this.props.isOwner
     };
 
     this.submitLogin = this.submitLogin.bind(this);
     this.emailChangeHandler = this.emailChangeHandler.bind(this);
     this.passwordChangeHandler = this.passwordChangeHandler.bind(this);
   }
+
+
 
   submitLogin = e => {
     e.preventDefault();
@@ -66,6 +70,8 @@ class LoginHeader extends Component {
   };
 
 
+
+
   emailChangeHandler = e => {
     this.setState({
       email: e.target.value
@@ -79,12 +85,20 @@ class LoginHeader extends Component {
 
   render() {
     let redirectVar = null;
+    console.log(cookie.load('cookie'));
     if(cookie.load('cookie')){
+      if(this.state.isTraveller){
       redirectVar = <Redirect to= "/TravelDash"/>
+      }else if(this.state.isOwner){
+        redirectVar = <Redirect to= "/OwnerDash"/>
+      }
   }else{
     if (this.state.userLoggedIn) {
-      redirectVar = <Redirect to="/TravelDash" />;
-    }
+      if(this.state.isTraveller){
+        redirectVar = <Redirect to= "/TravelDash"/>
+        }else if(this.state.isOwner){
+          redirectVar = <Redirect to= "/OwnerDash"/>
+        }    }
   }
     return (
       <div>

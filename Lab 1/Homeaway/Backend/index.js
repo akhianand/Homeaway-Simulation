@@ -2,23 +2,40 @@
                                                 Initializations             
 -----------------------------------------------------------------------------------------------------------*/
 var mysql = require("mysql");
-var bcrypt = require("bcryptjs");
+var bcrypt = require("bcrypt");
 var express = require("express");
 var app = express();
 var bodyParser = require("body-parser");
 var cors = require('cors');
 var session = require('express-session');
+var multer =require('multer');
+var mkdirp =require('mkdirp');
+
+
+var storage =multer.diskStorage({
+  destination:function(req,file,callback){
+    const dir ="uploads/akhileshmalini@gmail.com/"
+    mkdirp(dir, err => callback(null,dir))
+    
+  },
+  filename:function(req,file,callback){
+    var ext = file.originalname.split('.').pop();
+
+    callback(null,file.fieldname + '_' + Date.now()+"."+ext)
+  }
+});
+var upload =multer({storage:storage});
 
 
 app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
 
 //Express Sessions
 app.use(session({
-  secret              : 'Tobeornottobethatisthequestion',
-  resave              : false, 
-  saveUninitialized   : false, 
-  duration            : Date.now() + 2 * 60 * 60 * 1000, 
-  activeDuration      : Date.now() + 30 * 60 * 1000 //1/2 Hour
+  name:'cookie',
+  secret: "TobeOrNottobethatisthequestion",
+  resave: false,
+  saveUninitialized: true,
+  cookie:{maxAge: 60 * 60 * 1000, httpOnly: false, path : '/'}
 }));
 
 app.use(bodyParser.json());
@@ -64,6 +81,9 @@ var server = app.listen(8000, function() {
 /* -----------------------------------------------------------------------------------------------------------
                                                      Methods             
 -----------------------------------------------------------------------------------------------------------*/
+
+
+
 
 var createNewLightUserObject = (email, password, fname, lname) => {
   return new Promise(function(resolve, reject) {
@@ -127,6 +147,18 @@ var updateUserObjectToDatabase = (newUser,email) => {
   });
 };
 
+var addNewPropertyToDatabase = newProperty => {
+  return new Promise(function(resolve, reject) {
+    con.query("INSERT INTO Property_Table SET ?", newProperty, function(err, result) {
+      if (!err) {
+        resolve(result);
+      } else {
+        reject(err);
+      }
+    });
+  });
+};
+
 
 var comparePasswords= (password,hash) =>{
     return new Promise(function(resolve, reject) {
@@ -154,6 +186,55 @@ var getUserInformationFromDatabase = email => {
     });
   });
 };
+
+var getAllPropertyFromDatabase = email => {
+  return new Promise(function(resolve, reject) {
+    con.query("SELECT * FROM Property_Table WHERE uemail = ?", email, function(
+      err,
+      rows
+    ) {
+      if (!err) {
+        resolve(rows);
+      } else {
+        reject(err);
+      }
+    });
+  });
+};
+
+var getParticularPropertyOfUser = pid => {
+  return new Promise(function(resolve, reject) {
+    con.query("SELECT * FROM Property_Table WHERE pid = ?", pid, function(
+      err,
+      rows
+    ) {
+      if (!err) {
+        resolve(rows);
+      } else {
+        reject(err);
+      }
+    });
+  });
+};
+
+
+var getAllPropertiesWhere = (place) => {
+  return new Promise(function(resolve, reject) {
+    var sql = 'SELECT * FROM Property_Table WHERE city = ? OR state = ? OR country = ?';
+    con.query(sql,[place,place,place], function(
+      err,
+      rows
+    ) {
+      if (!err) {
+        resolve(rows);
+      } else {
+        reject(err);
+      }
+    });
+  });
+};
+
+
 
 
 /* -----------------------------------------------------------------------------------------------------------
@@ -229,6 +310,8 @@ app.post("/addUserLight", function(req, res) {
 
 
 
+
+
 app.post("/addUserHeavy", function(req, res) {
   const fname = req.body.fname;
   const lname = req.body.lname;
@@ -255,6 +338,7 @@ app.post("/addUserHeavy", function(req, res) {
     ugender: gender,
     uphone:phone,
     uabout:aboutme
+    
   };
 
   updateUserObjectToDatabase(User,email).then(result=>{
@@ -281,8 +365,9 @@ app.post('/login', function (req, res) {
         if(rows.length){
             comparePasswords(password, rows[0].upasswordhash).then(resp =>{
                 if(resp){ 
-                res.cookie('cookie',email,{maxAge: 60 * 60 * 1000, httpOnly: false, path : '/'});
                 req.session.user = email;
+                res.cookie('cookie',email,{maxAge: 60 * 60 * 1000, httpOnly: false, path : '/'});
+
                 res.status(200).json({
                   success: true,
                   email
@@ -355,4 +440,153 @@ app.post('/getUserInfo', function (req, res) {
 });
 
 
+app.post('/addProperty',upload.array('photos'),function(req,res,next){
+        const adl1= req.body.adl1;
+       const adl2=req.body.adl2;
+       const city=req.body.city;
+       const state=req.body.state;
+       const zip=req.body.zip;
+       const country=req.body.country;
+       const phone=req.body.phone;
+        const headline=req.body.headline;
+        const description=req.body.description;
+        const type=req.body.placetype;
+       const  bedrooms=req.body.bedrooms ;
+        const bathrooms=req.body.bathrooms ;
+        const accomodates=req.body.accomdates;
+       const  currency=req.body.currency;
+        const baserent=req.body.pricepernight;
+        const minimumstay=req.body.minimumstay;
+        const availablefrom =req.body.startDate;
+        const availableto=req.body.endDate;
 
+        let filenamearray =[];
+        req.files.forEach(file => {
+          filenamearray.push(file.filename);
+        });
+
+        let photos= filenamearray.join();
+  
+
+        var data ={ 
+           adl1: adl1,
+           adl2:adl2,
+           city:city,
+           state:state,
+           zip:zip,
+           country:country,
+           phone:phone,
+            headline:headline,
+            description:description,
+            type:type,
+            bedrooms:bedrooms ,
+            bathrooms:bathrooms ,
+            accomodates:accomodates,
+            currency:currency,
+            baserent:baserent,
+            minimumstay:minimumstay,
+            availablefrom : availablefrom,
+            availableto: availableto,
+            photos:photos,
+            uemail:"akhileshmalini@gmail.com"
+
+
+        }
+
+
+        addNewPropertyToDatabase(data).then(result =>{
+
+          res.status(200).json({
+            success: true,
+            result
+        });
+        });
+
+
+});
+
+
+
+
+app.post('/getAllPropertiesOfUser', function (req, res) {
+  const email = "akhileshmalini@gmail.com";
+  getAllPropertyFromDatabase(email).then(rows=>{
+    res.status(200).json({
+      success: true,
+      rows
+    });
+  }).catch(err =>{
+    res.status(200).json({
+      success: false,
+      err
+  });
+
+  });
+
+  
+});
+
+
+
+
+app.get('/uploads/:email/:photo', function (req, res,next) {
+  var em = req.params.email;
+  var options = {
+    root: __dirname + '/uploads/'+em,
+    dotfiles: 'deny',
+    headers: {
+        'x-timestamp': Date.now(),
+        'x-sent': true
+    }
+  };
+
+  var fileName = req.params.photo;
+  res.sendFile(fileName, options, function (err) {
+    if (err) {
+      next(err);
+    } else {
+      console.log('Sent:', fileName);
+    }
+  });
+});
+
+
+
+
+
+app.post('/getParticularPropertyOfUser', function (req, res) {
+  const pid = req.body.pid;
+  getParticularPropertyOfUser(pid).then(rows=>{
+    var prop =rows[0];
+    res.status(200).json({
+      success: true,
+      prop
+    });
+  }).catch(err =>{
+    res.status(200).json({
+      success: false,
+      err
+  });
+
+  });
+
+  
+});
+
+
+app.post('/getAllPropertiesWhere',  function (req, res) {
+  getAllPropertiesWhere("California").then(rows=>{
+    res.status(200).json({
+      success: true,
+      rows
+    });
+  }).catch(err =>{
+    res.status(200).json({
+      success: false,
+      err
+  });
+
+  });
+
+  
+});

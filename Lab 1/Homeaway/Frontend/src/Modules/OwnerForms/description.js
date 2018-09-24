@@ -92,11 +92,11 @@ class DescriptionForm extends Component {
   render() {
     return (
       <div className="col-9">
-        <div class="card sharpEdges shadow-lg">
-          <div class="card-body">
-            <h5 class="card-title">Describe your property</h5>
+        <div className="card sharpEdges shadow-lg">
+          <div className="card-body">
+            <h5 className="card-title">Describe your property</h5>
             <hr />
-            <p class="card-text">
+            <div className="card-text">
               <span>
                 Start out with a descriptive headline and a detailed summary of
                 your property.
@@ -104,7 +104,7 @@ class DescriptionForm extends Component {
               <br />
               <br />
               <input
-                class="form-control form-control-md"
+                className="form-control form-control-md"
                 type="text"
                 value={this.state.headline}
                 onChange={this.headlineChangeHandler}
@@ -180,10 +180,10 @@ class DescriptionForm extends Component {
                     <br />
                   </div>
                   <div className="col-6">
-                    <label for="bedrooms">Bedrooms</label>
+                    <label htmlFor="bedrooms">Bedrooms</label>
 
                     <input
-                      class="form-control form-control-md"
+                      className="form-control form-control-md"
                       type="text"
                       id="bedrooms"
                       value={this.state.bedrooms}
@@ -193,10 +193,10 @@ class DescriptionForm extends Component {
                     <br />
                   </div>
                   <div className="col-6">
-                    <label for="accomodates">Accomodates</label>
+                    <label htmlFor="accomodates">Accomodates</label>
 
                     <input
-                      class="form-control form-control-md"
+                      className="form-control form-control-md"
                       type="text"
                       value={this.state.accomdates}
                       onChange={this.accomdatesChangeHandler}
@@ -206,10 +206,10 @@ class DescriptionForm extends Component {
                     <br />
                   </div>
                   <div className="col-6">
-                    <label for="bathrooms">Bathrooms</label>
+                    <label htmlFor="bathrooms">Bathrooms</label>
 
                     <input
-                      class="form-control form-control-md"
+                      className="form-control form-control-md"
                       type="text"
                       value={this.state.bathrooms}
                       onChange={this.bathroomChangeHandler}
@@ -229,7 +229,9 @@ class DescriptionForm extends Component {
                 <div className="col-2 offset-2">
                   <button
                     type="button"
-                    class="viewProfileButton roundcornerbutton somePaddingforButtons btn-lg btn btn-primary"
+                    className="viewProfileButton roundcornerbutton somePaddingforButtons btn-lg btn btn-primary"
+                    onClick={this.props.OnBackPressed}
+
                   >
                     Back
                   </button>
@@ -237,13 +239,15 @@ class DescriptionForm extends Component {
                 <div className="col-2 offset-4">
                   <button
                     type="button"
-                    class="viewProfileButton roundcornerbutton somePaddingforButtons btn-lg btn btn-primary"
+                    className="viewProfileButton roundcornerbutton somePaddingforButtons btn-lg btn btn-primary"
+                    onClick={this.props.OnNextPressed}
+
                   >
                     Next
                   </button>
                 </div>
               </div>
-            </p>
+            </div>
           </div>
         </div>
         <br />

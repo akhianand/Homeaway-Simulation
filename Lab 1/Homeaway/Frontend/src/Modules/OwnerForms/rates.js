@@ -1,18 +1,14 @@
 import React, { Component } from "react";
 import "react-dates/initialize";
-import Profile from "../../Modules/Headers/ProfileHeader";
-import cookie from "react-cookies";
-import { Redirect } from "react-router";
-import AccountHeader from "../../Modules/Headers/AccountHeader";
 
 class RatesForm extends Component {
   constructor(props, context) {
     super(props, context);
 
     this.state = {
-        currency:"",
-        pricepernight:0,
-        minimumstay:0
+        currency:this.props.currency,
+        pricepernight:this.props.pricepernight,
+        minimumstay:this.props.minimumstay
 
     };
   }
@@ -21,6 +17,7 @@ class RatesForm extends Component {
       this.setState({
           currency:e.target.value
       })
+      this.props.onCurrencyChange(e.target.value);
   }
 
   pricepernightChangeHandler = e => {
@@ -31,6 +28,7 @@ class RatesForm extends Component {
   this.setState({
     pricepernight: ppn
   });
+  this.props.onPricePerNightChange(ppn);
 };
 
 minstayChangeHandler = e => {
@@ -41,16 +39,17 @@ minstayChangeHandler = e => {
   this.setState({
     minimumstay: ms
   });
+  this.props.onMinimumStayChange(ms);
 };
 
   render() {
     return (
       <div className="col-9">
-        <div class="card sharpEdges shadow-lg">
-          <div class="card-body">
-            <h5 class="card-title">How much do you want to charge</h5>
+        <div className="card sharpEdges shadow-lg">
+          <div className="card-body">
+            <h5 className="card-title">How much do you want to charge</h5>
             <hr />
-            <p class="card-text">
+            <div className="card-text">
               <br />
 
               <span>
@@ -66,11 +65,12 @@ minstayChangeHandler = e => {
 
               <div className="row">
                 <div className="col-6  ">
-                  <div class="form-group">
-                    <label for="exampleFormControlSelect1">Currency</label>
+                  <div className="form-group">
+                    <label htmlFor="currency">Currency</label>
 
-                    <select class="form-control" id="exampleFormControlSelect1">
-                      <option value="" />
+                    <select  value={this.state.currency}
+                      onChange={this.currencyChangeHandler}
+                      className="form-control" id="currency">
                       <option value="AUD">Australian Dollar (AUD)</option>
                       <option value="EUR">Euros (EUR)</option>
                       <option value="GBP">Great British Pound (GBP)</option>
@@ -87,24 +87,24 @@ minstayChangeHandler = e => {
               <hr />
               <div className="row">
                 <div className="col-6  ">
-                  <div class="form-group">
-                    <label for="formGroupExampleInput">Nightly Base Rate</label>
+                  <div className="form-group">
+                    <label >Nightly Base Rate</label>
                     <input
                       type="number"
                       value={this.state.pricepernight}
                       onChange={this.pricepernightChangeHandler}
-                      class="form-control"
+                      className="form-control"
                     />
                   </div>
                 </div>
               </div>
               <div className="row">
                 <div className="col-6  ">
-                  <div class="form-group">
-                    <label for="formGroupExampleInput">Minimum Stay</label>
+                  <div className="form-group">
+                    <label >Minimum Stay</label>
                     <input
                       type="number"
-                      class="form-control"
+                      className="form-control"
                       value={this.state.minimumstay}
                       onChange={this.minstayChangeHandler}
                     />
@@ -118,7 +118,9 @@ minstayChangeHandler = e => {
                 <div className="col-2 offset-2">
                   <button
                     type="button"
-                    class="viewProfileButton roundcornerbutton somePaddingforButtons btn-lg btn btn-primary"
+                    className="viewProfileButton roundcornerbutton somePaddingforButtons btn-lg btn btn-primary"
+                    onClick={this.props.OnBackPressed}
+
                   >
                     Back
                   </button>
@@ -126,13 +128,15 @@ minstayChangeHandler = e => {
                 <div className="col-2 offset-4">
                   <button
                     type="button"
-                    class="viewProfileButton roundcornerbutton somePaddingforButtons btn-lg btn btn-primary"
+                    className="viewProfileButton roundcornerbutton somePaddingforButtons btn-lg btn btn-primary"
+                    onClick={this.props.OnNextPressed}
+
                   >
                     Next
                   </button>
                 </div>
               </div>
-            </p>
+            </div>
           </div>
         </div>
       </div>

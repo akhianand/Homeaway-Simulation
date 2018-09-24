@@ -11,36 +11,48 @@ class ImagesForm extends Component {
 
     this.state = {
         maxSize : 3145728,//3Mb
-        images:[],
-        imagesAdded:false
+        images:this.props.images,
+        imagefiles:this.props.imagefiles
 
     };
   }
 
   handleOnDrop= (files, rejectedfiles) =>{
-   if(files.length>5){
-       alert("Exceeded Photo Limit, Choosing only 1st 5 Images");
-   }
+      if(this.state.images.length>5){
+        alert("Already Reached Photo Limit");
+      }else{
+  
         let  n =files.length;
         if(n>5){
             n=5;
         }
-        
+        if(files.length+this.state.images.length>5){
+            
+            n=5-this.state.images.length;
+            alert("Exceeding Limit, Only Choosing The First "+ n+" Photos" )
+        }
+
         for(let i=0;i<n;i++){
+          let newfile=files[i];
             const reader = new FileReader();
             reader.addEventListener("load", () =>{
                 this.setState({
-                    
                     images: this.state.images.concat({imgSrc: reader.result, imgCount:i+1}),
-                    imagesAdded:true
-
+                    imagefiles:this.state.imagefiles.concat(newfile)
                     
                 })
-            },false)
+                this.props.OnImagesAdded({imgSrc: reader.result, imgCount:i+1});
+                this.props.OnImageFilesChanged(newfile);
 
+            },false)
             reader.readAsDataURL(files[i])
+
+
+            
+
         }
-   
+    }
+
 }
 
   render() {
@@ -62,21 +74,16 @@ class ImagesForm extends Component {
         )
     })
 
-    let uploadButton = (this.state.imagesAdded ? <button
-        type="button"
-        class=" roundcornerbutton  btn-lg btn btn-primary"
-      >
-        Upload
-      </button> : null);
+ 
 
 
     let modals = this.state.images.map(image => {
         return(
     
 
-             <div class="modal fade bd-example-modal-lg" id={"imagemodal"+image.imgCount} tabindex="-1" role="dialog" >
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
+             <div className="modal fade bd-example-modal-lg" id={"imagemodal"+image.imgCount} tabIndex="-1" role="dialog" >
+            <div className="modal-dialog modal-lg">
+                <div className="modal-content">
                 <img
               data-toggle="modal" data-target={"#imagemodal"+image.imgCount}
               src={image.imgSrc}
@@ -92,11 +99,11 @@ class ImagesForm extends Component {
     })
     return (
       <div className="col-9">
-        <div class="card  sharpEdges shadow-lg">
-          <div class="card-body ">
-            <h5 class="card-title">Upload Photos</h5>
+        <div className="card  sharpEdges shadow-lg">
+          <div className="card-body ">
+            <h5 className="card-title">Upload Photos</h5>
             <hr />
-            <p class="card-text text-center ">
+            <div className="card-text text-center ">
               <div className="dottedbox">
                 <br />
                 <br />
@@ -136,7 +143,6 @@ class ImagesForm extends Component {
                 <br />
                 <br />
                
-                  {uploadButton}
                 
                
                 <br />
@@ -148,7 +154,9 @@ class ImagesForm extends Component {
                 <div className="col-2 offset-2">
                   <button
                     type="button"
-                    class="viewProfileButton roundcornerbutton somePaddingforButtons btn-lg btn btn-primary"
+                    className="viewProfileButton roundcornerbutton somePaddingforButtons btn-lg btn btn-primary"
+                                        onClick={this.props.OnBackPressed}
+
                   >
                     Back
                   </button>
@@ -156,13 +164,15 @@ class ImagesForm extends Component {
                 <div className="col-2 offset-4">
                   <button
                     type="button"
-                    class="viewProfileButton roundcornerbutton somePaddingforButtons btn-lg btn btn-primary"
+                    className="viewProfileButton roundcornerbutton somePaddingforButtons btn-lg btn btn-primary"
+                    onClick={this.props.OnNextPressed}
+
                   >
                     Next
                   </button>
                 </div>
               </div>
-            </p>
+            </div>
           </div>
         </div>
         <br />

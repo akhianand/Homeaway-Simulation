@@ -4,126 +4,119 @@ import axios from "axios";
 import cookie from "react-cookies";
 
 class AccountHeader extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      email: "",
+      currentpassword: "",
+      newpassword: "",
+      confirmpassword: "",
+      passwordChanged: true,
+      emailChanged: true,
+      passwordsmatch: true,
+      emailErrorMessage: "",
+      passwordErrorMessage: ""
+    };
 
-    constructor(props) {
-        super(props);
-        this.state = {
-         
-          email: "",
-          currentpassword: "",
-          newpassword: "",
-          confirmpassword:"",
-          passwordChanged:true,
-          emailChanged:true,
-          passwordsmatch:true,
-          emailErrorMessage:"",
-          passwordErrorMessage:""
-        };
-    
-        this.savePassword = this.savePassword.bind(this);
-        this.saveEmail = this.saveEmail.bind(this);
-        this.emailChangeHandler = this.emailChangeHandler.bind(this);
-        this.currentPasswordChangeHandler = this.currentPasswordChangeHandler.bind(this);
-        this.newpasswordChangeHandler = this.newpasswordChangeHandler.bind(this);
-        this.confirmPasswordChangeHandler = this.confirmPasswordChangeHandler.bind(this);
+    this.savePassword = this.savePassword.bind(this);
+    this.saveEmail = this.saveEmail.bind(this);
+    this.emailChangeHandler = this.emailChangeHandler.bind(this);
+    this.currentPasswordChangeHandler = this.currentPasswordChangeHandler.bind(
+      this
+    );
+    this.newpasswordChangeHandler = this.newpasswordChangeHandler.bind(this);
+    this.confirmPasswordChangeHandler = this.confirmPasswordChangeHandler.bind(
+      this
+    );
+  }
 
-       
-      }
-    
-      componentDidMount() {
-        this.setState({
-            email: cookie.load('cookie')
-          });    
+  componentDidMount() {
+    this.setState({
+      email: cookie.load("cookie")
+    });
+  }
+
+  emailChangeHandler = e => {
+    this.setState({
+      email: e.target.value
+    });
+  };
+
+  currentPasswordChangeHandler = e => {
+    this.setState({
+      currentpassword: e.target.value
+    });
+  };
+
+  newpasswordChangeHandler = e => {
+    this.setState({
+      newpassword: e.target.value
+    });
+  };
+  confirmPasswordChangeHandler = e => {
+    this.setState({
+      confirmpassword: e.target.value
+    });
+  };
+
+  saveEmail = e => {
+    e.preventDefault();
+    const data = {
+      currentemail: cookie.load("cookie"),
+      newemail: this.state.email
+    };
+
+    axios.defaults.withCredentials = true;
+    axios
+      .post("http://localhost:8000/addUserHeavy", data)
+      .then(response => {
+        console.log("Status Code : ", response.status);
+        if (response.status === 200) {
+          this.setState({
+            userAdded: true,
+            userAddingError: false,
+            userAddingMessage: ""
+          });
         }
-    
-        emailChangeHandler = e => {
-          this.setState({
-            email: e.target.value
-          });
-        };
-      
-        currentPasswordChangeHandler = e => {
-          this.setState({
-            currentpassword: e.target.value
-          });
-        };
-      
-        newpasswordChangeHandler = e => {
-          this.setState({
-            newpassword: e.target.value
-          });
-        };
-        confirmPasswordChangeHandler = e => {
-          this.setState({
-            confirmpassword: e.target.value
-          });
-        };
-    
-    
-       
-      
-        saveEmail = e => {
-          e.preventDefault();
-          const data = {
-            currentemail:cookie.load('cookie'),
-            newemail:this.state.email
-          };
-    
-      
-          axios.defaults.withCredentials = true;
-          axios.post("http://localhost:8000/addUserHeavy", data).then(response => {
-            console.log("Status Code : ", response.status);
-          if(response.status===200){  
-              this.setState({
-                  userAdded: true,
-                  userAddingError: false,
-                  userAddingMessage: ""
-                });
-              }
-      
-          }).catch(err =>{
-              this.setState({
-                  userAdded: false,
-                  userAddingError: true,
-                  userAddingMessage: "An Error occoured"
-                });
-      
-          });
-        };
+      })
+      .catch(err => {
+        this.setState({
+          userAdded: false,
+          userAddingError: true,
+          userAddingMessage: "An Error occoured"
+        });
+      });
+  };
 
+  savePassword = e => {
+    e.preventDefault();
 
-        savePassword = e => {
-            e.preventDefault();
+    const data = {
+      currentemail: cookie.load("cookie"),
+      newemail: this.state.email
+    };
 
-        
-
-            const data = {
-              currentemail:cookie.load('cookie'),
-              newemail:this.state.email
-            };
-      
-        
-            axios.defaults.withCredentials = true;
-            axios.post("http://localhost:8000/addUserHeavy", data).then(response => {
-              console.log("Status Code : ", response.status);
-            if(response.status===200){  
-                this.setState({
-                    userAdded: true,
-                    userAddingError: false,
-                    userAddingMessage: ""
-                  });
-                }
-        
-            }).catch(err =>{
-                this.setState({
-                    userAdded: false,
-                    userAddingError: true,
-                    userAddingMessage: "An Error occoured"
-                  });
-        
-            });
-          };
-      
+    axios.defaults.withCredentials = true;
+    axios
+      .post("http://localhost:8000/addUserHeavy", data)
+      .then(response => {
+        console.log("Status Code : ", response.status);
+        if (response.status === 200) {
+          this.setState({
+            userAdded: true,
+            userAddingError: false,
+            userAddingMessage: ""
+          });
+        }
+      })
+      .catch(err => {
+        this.setState({
+          userAdded: false,
+          userAddingError: true,
+          userAddingMessage: "An Error occoured"
+        });
+      });
+  };
 
   render() {
     return (
@@ -162,26 +155,22 @@ class AccountHeader extends Component {
                 <div className="col-2" />
                 <div className="col-6">
                   <br />
-                  <a
-                    href="#"
-                    class="somePaddingforButtons roundcornerbutton btn btn-primary"
-                  >
+                  <a class="somePaddingforButtons roundcornerbutton btn btn-primary">
                     Save
                   </a>
                 </div>
               </div>
             </div>
           </div>
-            <br/>
-            <br/>
-            <div class="card">
+          <br />
+          <br />
+          <div class="card">
             <h5 class="card-header bg-white">
               <b>Change your password</b>
-              
             </h5>
             <div class="card-body">
-            <br />
-            <br />
+              <br />
+              <br />
               <div className="row">
                 <div className="col-2">
                   <span className="mx-auto d-block">Current Password</span>
@@ -193,7 +182,6 @@ class AccountHeader extends Component {
                     type="password"
                   />
                   <br />
-                 
                 </div>
               </div>
               <div className="row">
@@ -207,7 +195,6 @@ class AccountHeader extends Component {
                     type="password"
                   />
                   <br />
-                 
                 </div>
               </div>
               <div className="row">
@@ -221,25 +208,19 @@ class AccountHeader extends Component {
                     type="password"
                   />
                   <br />
-                 
                 </div>
               </div>
               <div className="row">
                 <div className="col-2" />
                 <div className="col-6">
                   <br />
-                  <a
-                    href="#"
-                    class="somePaddingforButtons roundcornerbutton btn btn-primary"
-                  >
+                  <a class="somePaddingforButtons roundcornerbutton btn btn-primary">
                     Save
                   </a>
                 </div>
               </div>
             </div>
           </div>
-
-
         </div>
       </div>
     );

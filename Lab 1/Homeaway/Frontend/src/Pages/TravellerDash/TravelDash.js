@@ -55,6 +55,7 @@ class TravelDash extends Component {
   }
 
   render() {
+    console.log(cookie.load('cookie'))
     let redirectVar = null;
     if(!cookie.load('cookie')){
       redirectVar = <Redirect to= "/Login"/>
