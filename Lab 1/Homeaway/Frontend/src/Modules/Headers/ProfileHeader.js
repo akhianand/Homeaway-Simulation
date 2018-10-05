@@ -44,7 +44,7 @@ class Profile extends Component {
   componentDidMount() {
     const datas = {
      
-     email: cookie.load('cookie')
+     email: cookie.load('email')
 
     }
     axios.defaults.withCredentials = true;
@@ -152,7 +152,7 @@ class Profile extends Component {
         languages:this.state.languages,
         gender:this.state.gender,
         phonenumber:this.state.phonenumber,
-        email:cookie.load('cookie')
+        email:cookie.load('email')
       };
 
   

@@ -1,7 +1,14 @@
 import React, { Component } from "react";
 import "react-dates/initialize";
 import axios from "axios";
-import { Carousel } from "react-bootstrap";
+import { Redirect } from "react-router";
+import PropertyDetailsDisplay from "./PropertyDetailsDisplay";
+import PropertyBookingPanel from "../../Components/PropertyViewPanels/BookingPanel.js";
+import PropertyBookedPanel from "../../Components/PropertyViewPanels/ViewBookingPanel";
+import OwnerPropertyPanel from "../../Components/PropertyViewPanels/OwnerViewBookings";
+
+import LoginNav from "../Navbar/LoginNav";
+import cookie from "react-cookies";
 
 class PropertyView extends Component {
   constructor(props) {
@@ -12,244 +19,167 @@ class PropertyView extends Component {
       city: "",
       state: "",
       zip: 0,
+      owneremail:"",
       country: "",
       phone: 0,
-
       headline: "",
       description: "",
       placetype: "",
       bedrooms: 0,
       bathrooms: 0,
       accomdates: 0,
-
       images: "",
-
       startDate: null,
       endDate: null,
-
       currency: "",
       pricepernight: 0,
       minimumstay: 0,
       index: 0,
       direction: null,
-      pid:12
+      callfrom: "Customer",
+      pid: 18,
+      bookStart: null,
+      bookEnd: null
     };
   }
 
-  componentWillMount(){
-      console.log(this.props.location.state.pid)
+  componentWillMount() {
+    if (this.props.location.state.callfrom === "Customer") {
       this.setState({
-          pid:this.props.location.state.pid
+        callfrom: "Customer",
+        pid: this.props.location.state.pid
       });
-  }
-
-  componentDidMount() {
-    const data = {
-      pid: this.state.pid
+    } else if (this.props.location.state.callfrom === "BookedCustomer") {
+      console.log("Booked Cutomer");
+      this.setState({
+        callfrom: "BookedCustomer",
+        pid: this.props.location.state.pid,
+        bookStart: this.props.location.state.startDate,
+        bookEnd: this.props.location.state.endDate
+      });
+    }else if (this.props.location.state.callfrom === "Owner") {
+      this.setState({
+        callfrom: "Owner",
+        pid: this.props.location.state.pid,
+        bookStart: this.props.location.state.startDate,
+        bookEnd: this.props.location.state.endDate
+      });
+    }
+    var data = {
+      pid: this.props.location.state.pid
     };
+    //Get All Property Information
     axios.defaults.withCredentials = true;
     axios
-      .post("http://localhost:8000/getParticularPropertyOfUser", data)
+      .post("http://localhost:8000/getPropertyInformation", data)
       .then(response => {
         if (response.status === 200) {
           if (response.data.success) {
-            let adl1 = response.data.prop.adl1;
-            let adl2 = response.data.prop.adl2;
-            let city = response.data.prop.city;
-            let state = response.data.prop.state;
-            let zip = response.data.prop.zip;
-            let country = response.data.prop.country;
-            let phone = response.data.prop.phone;
-            let headline = response.data.prop.headline;
-            let description = response.data.prop.description;
-            let type = response.data.prop.type;
-            let bedrooms = response.data.prop.bedrooms;
-            let bathrooms = response.data.prop.bathrooms;
-            let accomodates = response.data.prop.accomodates;
-            let currency = response.data.prop.currency;
-            let baserent = response.data.prop.baserent;
-            let minimumstay = response.data.prop.minimumstay;
-            let availablefrom = response.data.prop.availablefrom;
-            let availableto = response.data.prop.availableto;
-            let photos = response.data.prop.photos;
-
+            console.log(response.data.prop);
             this.setState({
-              adl1: adl1,
-              adl2: adl2,
-              city: city,
-              state: state,
-              zip: zip,
-              country: country,
-              phone: phone,
-              headline: headline,
-              description: description,
-              placetype: type,
-              bedrooms: bedrooms,
-              bathrooms: bathrooms,
-              accomdates: accomodates,
-              currency: currency,
-              pricepernight: baserent,
-              minimumstay: minimumstay,
-              startDate: availablefrom,
-              endDate: availableto,
-              images: photos
+              adl1: response.data.prop.adl1,
+              adl2: response.data.prop.adl2,
+              city: response.data.prop.city,
+              state: response.data.prop.state,
+              zip: response.data.prop.zip,
+              country: response.data.prop.country,
+              phone: response.data.prop.phone,
+              headline: response.data.prop.headline,
+              description: response.data.prop.description,
+              placetype: response.data.prop.type,
+              bedrooms: response.data.prop.bedrooms,
+              bathrooms: response.data.prop.bathrooms,
+              accomdates: response.data.prop.accomodates,
+              images: response.data.prop.photos,
+              minimumstay: response.data.prop.minimumstay,
+              startDate: response.data.prop.availablefrom,
+              endDate: response.data.prop.availableto,
+              pricepernight: response.data.prop.baserent,
+              currency: response.data.prop.currency,
+              availablefrom: response.data.prop.availablefrom,
+              availableto: response.data.prop.availableto,
+              owneremail:response.data.prop.uemail
             });
-            console.log();
           }
         }
       });
   }
 
-  handleSelect(selectedIndex, e) {
-    alert(`selected=${selectedIndex}, direction=${e.direction}`);
-    this.setState({
-      index: selectedIndex,
-      direction: e.direction
-    });
-  }
-
   render() {
-    var images = this.state.images.split(",");
-    let AvailableFrom = this.state.startDate;
-    let AvailableTo = this.state.endDate;
+    //Sidepanel Changes Based on Weather its Travellere or Owner of Said Property
 
-    var fdate = new Date(AvailableFrom);
-    var ldate = new Date(AvailableTo);
-
-    var formatar =(fdate.getMonth() + 1) + '/' + fdate.getDate() + '/' +  fdate.getFullYear()
-    var formatdep=(ldate.getMonth() + 1) + '/' + ldate.getDate() + '/' +  ldate.getFullYear()
- 
-
-    let imagesarray = images.map(image => {
-      let ImageUrl = "./uploads/akhileshmalini@gmail.com/" + image;
-
-      return (
-        <Carousel.Item key={image}>
-          <img width={900} height={500} alt="900x500" src={ImageUrl} />
-        </Carousel.Item>
+    let sidepanel = null;
+    if (this.state.callfrom === "Customer") {
+      //Customer is Viewing Property
+      sidepanel = (
+        <PropertyBookingPanel
+          currency={this.state.currency}
+          pricepernight={this.state.pricepernight}
+          availablefrom={this.state.availablefrom}
+          availableto={this.state.availableto}
+          pid={this.state.pid}
+          city={this.state.city}
+          owneremail={this.state.owneremail}
+        />
       );
-    });
+    } else if (this.state.callfrom === "Owner") {
+      <OwnerPropertyPanel
+      currency={this.state.currency}
+      pricepernight={this.state.pricepernight}
+      startDate={this.state.bookStart}
+      endDate={this.state.bookEnd}
+      pid={this.state.pid}
+    />
+    } else if (this.state.callfrom === "BookedCustomer") {
+      sidepanel = (
+        <PropertyBookedPanel
+          currency={this.state.currency}
+          pricepernight={this.state.pricepernight}
+          startDate={this.state.bookStart}
+          endDate={this.state.bookEnd}
+          pid={this.state.pid}
+        />
+      );
+    }
+    let redirectVar = null;
+
+    if (this.state.BookingAddedSucessfully) {
+      redirectVar = <Redirect to="/TravelDash" />;
+    }
+    if (this.state.traveldashshow) {
+      redirectVar = <Redirect to="/TravelDash" />;
+    }
+    if (!cookie.load("email")) {
+      redirectVar = <Redirect to="/Login" />;
+    }
 
     return (
       <div>
-        <nav
-          className="navbar  navbar-light fixed-top  p-3 mb-5 bg-white"
-          id="dashNav"
-          style={{ background: "#ffffff" }}
-        >
-          <a className="navbar-brand" href="/LandingPage">
-            <img
-              src={"./img/HomeAway_LogoBlue.svg"}
-              className="img-fluid"
-              alt=""
-            />
-          </a>
-        </nav>
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-
+        <LoginNav />
         <div className="container">
+          {redirectVar}
           <div className="row">
             <div className="col-8">
-              <Carousel>{imagesarray}</Carousel>
+              <PropertyDetailsDisplay
+                adl1={this.state.adl1}
+                adl2={this.state.adl2}
+                city={this.state.city}
+                state={this.state.state}
+                zip={this.state.zip}
+                country={this.state.country}
+                phone={this.state.phone}
+                headline={this.state.headline}
+                description={this.state.description}
+                placetype={this.state.type}
+                bedrooms={this.state.bedrooms}
+                bathrooms={this.state.bathrooms}
+                accomdates={this.state.accomdates}
+                images={this.state.images}
+                minimumstay={this.state.minimumstay}
+              />
             </div>
-            <div className="col-4">
-              <div className="card">
-                <div className="card-body">
-                  <div className="card-title"><h3>{this.state.pricepernight}{this.state.currency}</h3> <small>per Night</small></div>
-                  <p className="card-text">
-                  Available from {formatar} to {formatdep}
 
-                  </p>
-
-                  <a href="/OwnerDash" className="btn btn-primary">
-                    Other Properties
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-          <br />
-          <br />
-          <h3>{this.state.headline}</h3>
-          <h5>
-            {this.state.adl1},{this.state.adl2},{this.state.city},
-            {this.state.state},{this.state.country} <br/>
-           
-          </h5>
-          Phone: {this.state.phone}
-          <br />
-          <br />
-          <div className="row">
-            <div className="col-2 ">
-              <img
-                src={"./img/sleeps.png"}
-                className="img-fluid fillgrey"
-                alt=""
-              />
-              <br />
-              Sleeps
-              <br />
-              <h3>{this.state.accomdates}</h3>
-            </div>
-            <div className="col-2 ">
-              <img
-                src={"./img/beds.png"}
-                className="img-fluid fillgrey"
-                alt=""
-              />
-              <br />
-              Beds
-              <br />
-              <h3>{this.state.bedrooms}</h3>
-            </div>
-            <div className="col-2 ">
-              <img
-                src={"./img/showers.png"}
-                className="img-fluid fillgrey"
-                alt=""
-              />
-              <br />
-              Bathrooms
-              <br />
-              <h3>{this.state.bathrooms}</h3>
-            </div>
-            <div className="col-2 ">
-              <img
-                src={"./img/nights.png"}
-                className="img-fluid fillgrey"
-                alt=""
-              />
-              <br />
-              Nights
-              <br />
-              <h3>{this.state.minimumstay}</h3>
-            </div>
-          </div>
-
-          <br />
-          <br />
-          <br />
-          <br />
-          <div className="row">
-            <div className="col-6">
-              <h3>Description</h3>
-              {this.state.description}
-              <br />
-              <br />
-              <br />
-              <br />
-              <br />
-              <br />
-              <br />
-              <br />
-              <br />
-              <br />
-            </div>
+            <div className="col-4">{sidepanel}</div>
           </div>
         </div>
       </div>

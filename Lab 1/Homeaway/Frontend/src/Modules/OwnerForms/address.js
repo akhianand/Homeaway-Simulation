@@ -11,11 +11,8 @@ class AddressForm extends Component {
       state: this.props.state,
       zip: this.props.zip,
       country: this.props.country,
-      phone:this.props.phone
+      phone: this.props.phone
     };
-
-  
-    
 
     this.addressLine1ChangeHandler = this.addressLine1ChangeHandler.bind(this);
     this.addressLine2ChangeHandler = this.addressLine2ChangeHandler.bind(this);
@@ -23,7 +20,6 @@ class AddressForm extends Component {
     this.stateChangeHandler = this.stateChangeHandler.bind(this);
     this.zipChangeHandler = this.zipChangeHandler.bind(this);
     this.countryChangeHandler = this.countryChangeHandler.bind(this);
-
   }
 
   addressLine1ChangeHandler = e => {
@@ -38,7 +34,6 @@ class AddressForm extends Component {
       adl2: e.target.value
     });
     this.props.onAddressLineTwoChange(e.target.value);
-
   };
 
   cityChangeHandler = e => {
@@ -46,7 +41,6 @@ class AddressForm extends Component {
       city: e.target.value
     });
     this.props.onCityChange(e.target.value);
-
   };
 
   stateChangeHandler = e => {
@@ -54,20 +48,17 @@ class AddressForm extends Component {
       state: e.target.value
     });
     this.props.onStateChange(e.target.value);
-
   };
 
   zipChangeHandler = e => {
-      let zipval =e.target.value;
+    let zipval = e.target.value;
     if (e.target.value > 10) {
-        zipval = zipval.slice(0, 10);
+      zipval = zipval.slice(0, 10);
     }
     this.setState({
       zip: zipval
     });
     this.props.onZipChange(zipval);
-    
-
   };
 
   countryChangeHandler = e => {
@@ -75,21 +66,18 @@ class AddressForm extends Component {
       country: e.target.value
     });
     this.props.onCountryChange(e.target.value);
-
   };
+
   phoneChangeHandler = e => {
-    let pval =e.target.value;
+    let pval = e.target.value;
     if (e.target.value > 10) {
-        pval = pval.slice(0, 10);
+      pval = pval.slice(0, 10);
     }
     this.setState({
       phone: pval
     });
     this.props.onPhoneChange(pval);
-
   };
-
- 
 
   render() {
     return (
@@ -179,41 +167,31 @@ class AddressForm extends Component {
                         id="inputCountry"
                         maxLength="30"
                       />
-                      
-                 
                     </div>
                     <div className="form-group col-md-6">
                       <label htmlFor="inputCountry">Phone</label>
                       <input
-                      className="form-control form-control-md"
-                      type="number"
-                      value={this.state.phone}
-                      onChange={this.phoneChangeHandler}
-                      placeholder="Phone Number"
-                    />
-                      
-                 
+                        className="form-control form-control-md"
+                        type="number"
+                        value={this.state.phone}
+                        onChange={this.phoneChangeHandler}
+                        placeholder="Phone Number"
+                      />
                     </div>
-                     
                   </div>
                   <br />
                   <br />
                   <br />
-             
                   <hr />
                 </div>
               </div>
-
               <div className="row">
-                <div className="col-2 offset-2">
-             
-                </div>
+                <div className="col-2 offset-2" />
                 <div className="col-2 offset-4">
                   <button
                     type="button"
                     className="viewProfileButton roundcornerbutton somePaddingforButtons btn-lg btn btn-primary"
                     onClick={this.props.OnNextPressed}
-
                   >
                     Next
                   </button>

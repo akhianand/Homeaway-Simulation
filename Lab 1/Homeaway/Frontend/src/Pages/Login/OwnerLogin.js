@@ -7,10 +7,8 @@ class OwnerLogin extends Component {
   render() {
     return (
       <div>
-      
       <LoginNav/>
       <LoginHeader isOwner={true} isTraveller={false}/>
-
       </div>
       
     );

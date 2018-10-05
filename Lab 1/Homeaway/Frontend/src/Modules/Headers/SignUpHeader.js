@@ -98,7 +98,7 @@ class SignUpHeader extends Component {
 
   render() {
     let redirectVar = null;
-    if(cookie.load('cookie')){
+    if(cookie.load('email')){
       redirectVar = <Redirect to= "/TravelDash"/>
   }else{
     if (this.state.userAdded) {

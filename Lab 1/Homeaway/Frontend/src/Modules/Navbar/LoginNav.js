@@ -10,7 +10,7 @@ class LoginNav extends Component {
         style={{ background: "#ffffff" }}
       >
         <div className="container">
-          <a className="navbar-brand" href="/LandingPage">
+          <a className="navbar-brand" href="/">
             <img
               src={"./img/HomeAway_LogoBlue.svg"}
               className="img-fluid"
@@ -24,3 +24,4 @@ class LoginNav extends Component {
 }
 
 export default LoginNav;
+

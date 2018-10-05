@@ -10,7 +10,7 @@ class ImagesForm extends Component {
     super(props, context);
 
     this.state = {
-        maxSize : 3145728,//3Mb
+        maxSize : 3145728,
         images:this.props.images,
         imagefiles:this.props.imagefiles
 
@@ -21,38 +21,28 @@ class ImagesForm extends Component {
       if(this.state.images.length>5){
         alert("Already Reached Photo Limit");
       }else{
-  
         let  n =files.length;
         if(n>5){
             n=5;
         }
         if(files.length+this.state.images.length>5){
-            
             n=5-this.state.images.length;
             alert("Exceeding Limit, Only Choosing The First "+ n+" Photos" )
         }
-
         for(let i=0;i<n;i++){
           let newfile=files[i];
             const reader = new FileReader();
             reader.addEventListener("load", () =>{
                 this.setState({
                     images: this.state.images.concat({imgSrc: reader.result, imgCount:i+1}),
-                    imagefiles:this.state.imagefiles.concat(newfile)
-                    
+                    imagefiles:this.state.imagefiles.concat(newfile)           
                 })
                 this.props.OnImagesAdded({imgSrc: reader.result, imgCount:i+1});
                 this.props.OnImageFilesChanged(newfile);
-
             },false)
             reader.readAsDataURL(files[i])
-
-
-            
-
         }
     }
-
 }
 
   render() {
@@ -60,43 +50,34 @@ class ImagesForm extends Component {
     let thumbnails = this.state.images.map(image => {
         return(
             <li>
-
             <img
               data-toggle="modal" data-target={"#imagemodal"+image.imgCount}
               src={image.imgSrc}
-              alt="..."
+              alt=""
               className ="img-thumbnail resize"
             />
-
-        
-
           </li>
         )
-    })
-
- 
+    });
 
 
     let modals = this.state.images.map(image => {
         return(
-    
-
              <div className="modal fade bd-example-modal-lg" id={"imagemodal"+image.imgCount} tabIndex="-1" role="dialog" >
             <div className="modal-dialog modal-lg">
                 <div className="modal-content">
                 <img
               data-toggle="modal" data-target={"#imagemodal"+image.imgCount}
               src={image.imgSrc}
-              alt="..."
+              alt=""
               className ="img resizeModal"
             /> 
                 </div>
             </div>
-            </div>
-
-         
+            </div>    
         )
-    })
+    });
+
     return (
       <div className="col-9">
         <div className="card  sharpEdges shadow-lg">
@@ -108,7 +89,6 @@ class ImagesForm extends Component {
                 <br />
                 <br />
                 <br />
-
                 <div className="container">
                   <Dropzone
                     className="dropzone"
@@ -133,18 +113,13 @@ class ImagesForm extends Component {
                     <br />
                   </Dropzone>
                 </div>
-
                 <br />
                 <br />
-
                 <ul className="imagelist">
                 {thumbnails}
                 </ul>
                 <br />
-                <br />
-               
-                
-               
+                <br />    
                 <br />
                 <br />
                 <br />
@@ -155,8 +130,7 @@ class ImagesForm extends Component {
                   <button
                     type="button"
                     className="viewProfileButton roundcornerbutton somePaddingforButtons btn-lg btn btn-primary"
-                                        onClick={this.props.OnBackPressed}
-
+                              onClick={this.props.OnBackPressed}
                   >
                     Back
                   </button>
@@ -166,7 +140,6 @@ class ImagesForm extends Component {
                     type="button"
                     className="viewProfileButton roundcornerbutton somePaddingforButtons btn-lg btn btn-primary"
                     onClick={this.props.OnNextPressed}
-
                   >
                     Next
                   </button>
@@ -181,9 +154,6 @@ class ImagesForm extends Component {
         <br />
         <br />
         {modals}
-
-           
-
       </div>
     );
   }

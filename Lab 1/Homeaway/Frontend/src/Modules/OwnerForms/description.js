@@ -5,7 +5,6 @@ class DescriptionForm extends Component {
   constructor(props, context) {
     super(props, context);
     let l = this.props.description.length;
-
     this.state = {
       headline: this.props.headline,
       description: this.props.description,
@@ -22,7 +21,6 @@ class DescriptionForm extends Component {
     this.bedroomChangeHandler = this.bedroomChangeHandler.bind(this);
     this.bathroomChangeHandler = this.bathroomChangeHandler.bind(this);
     this.accomdatesChangeHandler = this.accomdatesChangeHandler.bind(this);
-
   }
 
   
@@ -42,7 +40,6 @@ class DescriptionForm extends Component {
       cahrsleft: leftl
     });
     this.props.onDescriptionChange(e.target.value);
-
   };
 
   placetypeChangeHandler = e => {
@@ -50,7 +47,6 @@ class DescriptionForm extends Component {
       placetype: e.target.value
     });
     this.props.onPlaceTypeChange(e.target.value);
-
   };
 
   bedroomChangeHandler = e => {
@@ -62,7 +58,6 @@ class DescriptionForm extends Component {
       bedrooms: bedroomVal
     });
     this.props.onBedroomChange(e.target.value);
-
   };
 
   bathroomChangeHandler = e => {
@@ -112,7 +107,6 @@ class DescriptionForm extends Component {
                 maxLength="40"
               />
               <br />
-
               <br />
               <div className="row">
                 <div className="col-12  ">
@@ -176,12 +170,10 @@ class DescriptionForm extends Component {
                       <option value="villa">Villa</option>
                       <option value="yacht">Yacht</option>
                     </select>
-
                     <br />
                   </div>
                   <div className="col-6">
                     <label htmlFor="bedrooms">Bedrooms</label>
-
                     <input
                       className="form-control form-control-md"
                       type="text"
@@ -194,7 +186,6 @@ class DescriptionForm extends Component {
                   </div>
                   <div className="col-6">
                     <label htmlFor="accomodates">Accomodates</label>
-
                     <input
                       className="form-control form-control-md"
                       type="text"
@@ -207,7 +198,6 @@ class DescriptionForm extends Component {
                   </div>
                   <div className="col-6">
                     <label htmlFor="bathrooms">Bathrooms</label>
-
                     <input
                       className="form-control form-control-md"
                       type="text"
@@ -221,7 +211,6 @@ class DescriptionForm extends Component {
                   <br />
                   <br />
                   <br />
-               
                   <hr />
                 </div>
               </div>
@@ -231,7 +220,6 @@ class DescriptionForm extends Component {
                     type="button"
                     className="viewProfileButton roundcornerbutton somePaddingforButtons btn-lg btn btn-primary"
                     onClick={this.props.OnBackPressed}
-
                   >
                     Back
                   </button>
@@ -241,7 +229,6 @@ class DescriptionForm extends Component {
                     type="button"
                     className="viewProfileButton roundcornerbutton somePaddingforButtons btn-lg btn btn-primary"
                     onClick={this.props.OnNextPressed}
-
                   >
                     Next
                   </button>

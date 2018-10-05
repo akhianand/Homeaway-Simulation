@@ -17,11 +17,8 @@ class AvailabilityForm extends Component {
   }
 
   datesChageHandler = ({ startDate, endDate }) => {
-    
     this.setState({ startDate, endDate });
     this.props.WhenDateChanged({ startDate, endDate });
-
-    
   };
 
   render() {

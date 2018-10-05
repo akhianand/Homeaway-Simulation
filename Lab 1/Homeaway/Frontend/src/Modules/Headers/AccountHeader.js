@@ -32,7 +32,7 @@ class AccountHeader extends Component {
 
   componentDidMount() {
     this.setState({
-      email: cookie.load("cookie")
+      email: cookie.load("email")
     });
   }
 
@@ -62,7 +62,7 @@ class AccountHeader extends Component {
   saveEmail = e => {
     e.preventDefault();
     const data = {
-      currentemail: cookie.load("cookie"),
+      currentemail: cookie.load("email"),
       newemail: this.state.email
     };
 
@@ -92,7 +92,7 @@ class AccountHeader extends Component {
     e.preventDefault();
 
     const data = {
-      currentemail: cookie.load("cookie"),
+      currentemail: cookie.load("email"),
       newemail: this.state.email
     };
 

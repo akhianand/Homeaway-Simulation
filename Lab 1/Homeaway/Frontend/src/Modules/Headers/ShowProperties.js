@@ -3,6 +3,16 @@ import "react-dates/initialize";
 import axios from "axios";
 import { Redirect } from "react-router";
 import LoginNav from "../../Modules/Navbar/LoginNav";
+import MapComponent from "../../Components/MapComponent";
+import {withRouter} from "react-router-dom";
+
+import { DateRangePicker } from "react-dates";
+import "react-dates/initialize";
+import "react-dates/lib/css/_datepicker.css";
+import moment from "moment";
+import "react-dates/initialize";
+import "react-dates/lib/css/_datepicker.css";
+import cookie from 'react-cookies';
 
 class ShowAllProperties extends Component {
   constructor(props) {
@@ -10,81 +20,173 @@ class ShowAllProperties extends Component {
     this.state = {
       properties: [],
       propertyClicked: false,
-      propertypid: ""
+      propertypid: "",
+      where: "",
+      startDate: null,
+      endDate: null,
+      people: "1",
+      searchedClicked: false
     };
   }
 
-  componentDidMount() {
-    axios.defaults.withCredentials = true;
-    axios.post("http://localhost:8000/getAllPropertiesWhere").then(response => {
-      if (response.status === 200) {
-        console.log(response.data);
-        if (response.data.success) {
-          this.setState({
-            properties: response.data.rows
-          });
-        }
-      }
+  onSearchClickedListener = () => {
+    this.setState({
+      searchedClicked: true
     });
+  };
+
+  datesChageHandler = ({ startDate, endDate }) => {
+    this.setState({ startDate, endDate });
+  };
+
+  WhereChangeHandler = e => {
+    this.setState({
+      where: e.target.value
+    });
+  };
+
+  peopleChangeHandler = e => {
+    this.setState({
+      people: e.target.value
+    });
+  };
+
+  componentWillMount() {
+    console.log(moment(this.props.location.state.startDate));
+    this.setState({
+      where: this.props.location.state.where,
+      startDate: moment(this.props.location.state.startDate),
+      endDate: moment(this.props.location.state.endDate),
+      people: this.props.location.state.people
+    });
+
+ 
+
+
   }
 
-   capitalizeFirstLetter(string) {
+  componentDidMount(){
+    var data = {
+      where: this.state.where,
+      people: this.state.people
+    };
+    axios.defaults.withCredentials = true;
+    axios
+      .post("http://localhost:8000/getAllPropertiesWhere", data)
+      .then(response => {
+        if (response.status === 200) {
+          console.log(response.data);
+          if (response.data.success) {
+            let filteredRows =[];
+            response.data.rows.forEach(row => {
+              let avf =moment(row.availablefrom);
+              let avt =moment(row.availableto);
+    
+               if((this.state.endDate.diff(avf, "days")>=0)){
+               
+                filteredRows.push(row)
+               }
+            });
+            console.log(response.data.rows);
+            this.setState({
+              properties: filteredRows
+            });
+          }
+        }
+      });
+  }
+
+
+
+  capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
-}
+  }
 
   onViewPropertyClickHandler = e => {
     console.log(e.currentTarget.value);
   };
 
   render() {
-    let properties = this.state.properties.map(property => {
+
+    let properties =null;
+    if(this.state.properties.length>0){
+      properties = this.state.properties.map(property => {
       var arr = property.photos.split(",");
       let ImageUrl = "./uploads/akhileshmalini@gmail.com/" + arr[0];
 
       return (
-        <div className="row">
-          <div className="col-8">
-            <div key={property.pid} class="card">
-              <div class="card-body">
+        
+          <div className="col-6">
+            <div key={property.pid} className="card"
+            onClick={() => {
+              this.setState({
+                propertyClicked: true,
+                propertypid: property.pid
+              });
+            }}
+            >
+              <div className="card-body">
                 <div className="row">
-                  <div className="col-4">
-                   <img src={ImageUrl} alt="..." class="img-thumbnail" />
+                  <div className="col-4"> 
+                    <img src={ImageUrl} alt="..." className="img-thumbnail  " />
                   </div>
                   <div className="col-8">
-                    <h3 class="card-title" >{property.headline}</h3>
-                    <p class="card-text">{this.capitalizeFirstLetter(property.type)}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{property.bedrooms}BR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{property.bathrooms}BR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sleeps&nbsp;{property.accomodates}
-                    <br/><br/>
-                        {property.baserent}{property.currency} <small>per Night</small>
+                  
+                      <h4 className="propLink">{property.headline}</h4>
+              
+                    <p className="card-text">
+                      {this.capitalizeFirstLetter(property.type)}
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      {property.bedrooms}
+                      BR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      {property.bathrooms}
+                      BR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sleeps&nbsp;
+                      {property.accomodates}
+                      <br />
+                      <br />
+                      <div style={{background:"#e6e6e6"}}>
+                      &nbsp;&nbsp;&nbsp;{property.baserent}
+                      {property.currency} <small>per Night</small>
+                      </div>
                     </p>
-
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+
       );
     });
+  }else{
+    properties=
+    <div className="col-6"
+>
+    <h3>No Properties Found</h3>
+    </div>
+    
+  }
 
     let redirectVar = null;
     if (this.state.propertyClicked) {
       redirectVar = (
-        <Redirect
-          to={{
+     this.props.history.push({
             pathname: "/PropertyView",
-            state: { pid: this.state.propertypid }
-          }}
-        />
+            state: {
+              pid: this.state.propertypid,
+              callfrom: "Customer"
+            }
+          })
       );
+    }
+
+    if(!cookie.load('email')){
+      redirectVar = <Redirect to= "/Login"/>
     }
 
     return (
       <div>
+        {redirectVar}
         <LoginNav />
-
-        <br />
-        <br />
-        <br />
         <br />
         <br />
         <br />
@@ -92,10 +194,79 @@ class ShowAllProperties extends Component {
         <br />
         <br />
 
-        <div className="container">{properties}</div>
+        <div className="container">
+          <div className="card  increaseWidthBothSidesLesser">
+            <div className="card-body mastcardContent ">
+              <div className="row">
+                <div className="col-4 ">
+                <small style={{color:"#000000"}}>Where</small>
+                  <input
+                    className="form-control form-control-lg"
+                    type="text"
+                    placeholder="Where do you want to go?"
+                    value={this.state.where}
+                    onChange={this.WhereChangeHandler}
+                  />
+                </div>
+                <div className="col-3 ">
+                <small style={{color:"#000000"}}>When</small>
+
+                  <DateRangePicker
+                    startDate={this.state.startDate}
+                    startDateId="your_unique_start_date_id"
+                    endDate={this.state.endDate}
+                    endDateId="your_unique_end_date_id"
+                    onDatesChange={({ startDate, endDate }) =>
+                      this.setState({ startDate, endDate })
+                    }
+                    focusedInput={this.state.focusedInput}
+                    onFocusChange={focusedInput =>
+                      this.setState({ focusedInput })
+                    }
+                  />
+                </div>
+                <div className="col-2">
+                <small style={{color:"#000000"}}>How Many</small>
+
+                  <select
+                    value={this.state.people}
+                    onChange={this.peopleChangeHandler}
+                    className="form-control form-control-lg"
+                  >
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                  </select>
+                </div>
+                <div className="col-1">
+                <br></br>
+                  <button
+                    type="button"
+                    onClick={this.onSearchClickedListener}
+                    className=" roundcornerbutton btn btn-primary btn-lg"
+                  >
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Search&nbsp;&nbsp;&nbsp;&nbsp;
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <br />
+          <br />
+          <br />
+          <div className="row increaseWidthBothSidesLesser">
+          {properties}
+          <div id="map" className="col-6">
+          <MapComponent/>
+          </div>
+          </div>
+        </div>
       </div>
     );
   }
 }
 
-export default ShowAllProperties;
+export default withRouter(ShowAllProperties);

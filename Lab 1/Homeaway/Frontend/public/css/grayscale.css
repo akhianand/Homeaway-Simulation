@@ -127,6 +127,16 @@ body{
   margin-right:-50%;
 }
 
+
+.increaseWidthLesser{
+  margin-left: -50%;
+  margin-right:-8%;
+}
+.increaseWidthBothSidesLesser{
+  margin-left: -8%;
+  margin-right:-8%;
+}
+
 @media (min-width: 992px) {
   .masthead {
     height: 100vh;
@@ -862,3 +872,56 @@ footer {
 .fillgrey{
 fill: #777777;
 }
+
+/* unvisited link */
+.propLink:link {
+  color: blue;
+}
+
+/* visited link */
+.propLink:visited {
+  color: green;
+}
+
+/* mouse over link */
+.propLink:hover {
+  color: lightblue;
+}
+
+/* selected link */
+.propLink:active {
+  color: blue;
+}
+
+.reducepaddingonright{
+  padding-right: -20%;
+}
+
+.navbar-nav > li{
+  margin-left:20px;
+  margin-right:20px;
+}
+
+.WhiteButtonTextBlue { 
+  color: #0067db;
+  background: #ffffff;
+  padding: 10px;
+  padding-left: 20px;
+  padding-right: 20px;
+
+  }
+
+  .smallNegetiveMarginUp{
+    margin-top: 10px;
+  }
+
+  .navButtonCursor{
+    cursor:pointer;
+
+  }
+
+  .negetivPadding {
+   padding: -10%;
+  }
+
+ 

@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import "react-dates/initialize";
 import axios from "axios";
-import { Redirect } from "react-router";
+import { withRouter } from "react-router-dom";
+import cookie from "react-cookies";
 
 class Properties extends Component {
   constructor(props) {
@@ -16,14 +17,11 @@ class Properties extends Component {
 
 
 
-  componentDidMount(){
-       
+  componentDidMount(){ 
     const data = {
-        email: "akhileshmalini@gmail.com",
-
+        email: cookie.load("email"),
     };
     axios.defaults.withCredentials = true;
-
     axios.post('http://localhost:8000/getAllPropertiesOfUser',data)
             .then((response) => {
               if(response.status===200){
@@ -36,13 +34,6 @@ class Properties extends Component {
         });
 }
 
-onViewPropertyClickHandler = (e) =>{
-  console.log(e.currentTarget.value);
-//   this.setState({
-//     propertyClicked: true,
-//     propertypid:pid
-//  });
-}
 
 
   render() {
@@ -51,18 +42,21 @@ onViewPropertyClickHandler = (e) =>{
     let properties = this.state.properties.map(property => {
    
       var arr = property.photos.split(",");
-      let ImageUrl = "./uploads/akhileshmalini@gmail.com/"+arr[0];
+      let ImageUrl = "./uploads/"+cookie.load("email")+"/"+arr[0];
 
       return(
-        <div key={property.pid} className="col-3">
+        
+
+
+        <div key={property.pid} className="col-4">
         <div className="card" >
         <img className="card-img-top" src={ImageUrl} alt="" />
         <div className="card-body">
           <h5 className="card-title" >{property.headline}</h5>
           <p className="card-text">
-           
+          <b>@{property.city}</b>
           </p>
-          <a onClick={()=>{ this.setState({propertyClicked :true, propertypid:property.pid }); }}  className="btn btn-primary text-white">
+          <a  onClick={()=>{ this.setState({propertyClicked :true, propertypid:property.pid }); }}  className="btn btn-primary text-white">
             View Property
           </a>
         </div>
@@ -76,10 +70,13 @@ onViewPropertyClickHandler = (e) =>{
 
     let redirectVar = null;
     if(this.state.propertyClicked){
-      redirectVar = <Redirect to={{
+      redirectVar = this.props.history.push({
         pathname: '/PropertyView',
-        state: { pid: this.state.propertypid }
-    }} />
+        state: { 
+        pid: this.state.propertypid,
+        callfrom:"Owner" 
+      }
+    })
   }
 
 
@@ -88,19 +85,8 @@ onViewPropertyClickHandler = (e) =>{
       <div className="container">
         <div className="row">
           
-        {redirectVar}
-      {properties}
-
-          
-
-     
-
-
-
-
-
-
-
+          {redirectVar}
+           {properties}
           <div className="col-3">
           <div className="mx-auto text-center">
           <br/><br/><br/><br/><br/>
@@ -122,4 +108,4 @@ onViewPropertyClickHandler = (e) =>{
   }
 }
 
-export default Properties;
+export default withRouter(Properties);

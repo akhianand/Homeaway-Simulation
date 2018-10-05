@@ -202,7 +202,7 @@ var getAllPropertyFromDatabase = email => {
   });
 };
 
-var getParticularPropertyOfUser = pid => {
+var getPropertyInformation = pid => {
   return new Promise(function(resolve, reject) {
     con.query("SELECT * FROM Property_Table WHERE pid = ?", pid, function(
       err,
@@ -218,10 +218,10 @@ var getParticularPropertyOfUser = pid => {
 };
 
 
-var getAllPropertiesWhere = (place) => {
+var getAllPropertiesWhere = (place,sleeps) => {
   return new Promise(function(resolve, reject) {
-    var sql = 'SELECT * FROM Property_Table WHERE city = ? OR state = ? OR country = ?';
-    con.query(sql,[place,place,place], function(
+    var sql = 'SELECT * FROM Property_Table WHERE city = ? OR state = ? OR country = ? AND accomodates<= ?' ;
+    con.query(sql,[place,place,place,sleeps], function(
       err,
       rows
     ) {
@@ -234,6 +234,63 @@ var getAllPropertiesWhere = (place) => {
   });
 };
 
+var addNewBookingtoDatabase = (booking) => {
+  return new Promise(function(resolve, reject) {
+    con.query("INSERT INTO Booking_Table SET ?", booking, function(err, result) {
+      if (!err) {
+        resolve(result);
+      } else {
+        reject(err);
+      }
+    });
+  });
+};
+
+
+var getAllBookingsOfCurrentProperty = pid => {
+  return new Promise(function(resolve, reject) {
+    con.query("SELECT * FROM Booking_Table WHERE pid = ?", pid, function(
+      err,
+      rows
+    ) {
+      if (!err) {
+        resolve(rows);
+      } else {
+        reject(err);
+      }
+    });
+  });
+};
+
+var getAllTripsOfUser = email => {
+  return new Promise(function(resolve, reject) {
+    con.query("SELECT * FROM Booking_Table WHERE uemail = ?", email, function(
+      err,
+      rows
+    ) {
+      if (!err) {        
+        resolve(rows);
+      } else {
+        reject(err);
+      }
+    });
+  });
+};
+
+var getAllBookingsOfOwnersProperties = email => {
+  return new Promise(function(resolve, reject) {
+    con.query("SELECT * FROM Booking_Table WHERE owneremail = ?", email, function(
+      err,
+      rows
+    ) {
+      if (!err) {        
+        resolve(rows);
+      } else {
+        reject(err);
+      }
+    });
+  });
+};
 
 
 
@@ -266,7 +323,7 @@ app.post("/addUserLight", function(req, res) {
             addNewLightUserObjectToDatabase(newUser)
               .then(result => {
                 console.log("Result" + result);
-                res.cookie('cookie',email,{maxAge: 60 * 60 * 1000, httpOnly: false, path : '/'});
+                res.cookie('email',email,{maxAge: 60 * 60 * 1000, httpOnly: false, path : '/'});
                 req.session.user = email;
                 res.status(200).json({
                   success: true,
@@ -366,7 +423,7 @@ app.post('/login', function (req, res) {
             comparePasswords(password, rows[0].upasswordhash).then(resp =>{
                 if(resp){ 
                 req.session.user = email;
-                res.cookie('cookie',email,{maxAge: 60 * 60 * 1000, httpOnly: false, path : '/'});
+                res.cookie('email',email,{maxAge: 60 * 60 * 1000, httpOnly: false, path : '/'});
 
                 res.status(200).json({
                   success: true,
@@ -465,6 +522,7 @@ app.post('/addProperty',upload.array('photos'),function(req,res,next){
           filenamearray.push(file.filename);
         });
 
+        
         let photos= filenamearray.join();
   
 
@@ -554,9 +612,9 @@ app.get('/uploads/:email/:photo', function (req, res,next) {
 
 
 
-app.post('/getParticularPropertyOfUser', function (req, res) {
+app.post('/getPropertyInformation', function (req, res) {
   const pid = req.body.pid;
-  getParticularPropertyOfUser(pid).then(rows=>{
+  getPropertyInformation(pid).then(rows=>{
     var prop =rows[0];
     res.status(200).json({
       success: true,
@@ -575,7 +633,9 @@ app.post('/getParticularPropertyOfUser', function (req, res) {
 
 
 app.post('/getAllPropertiesWhere',  function (req, res) {
-  getAllPropertiesWhere("California").then(rows=>{
+  var place= req.body.where;
+  var people =req.body.people;
+  getAllPropertiesWhere(place,people).then(rows=>{
     res.status(200).json({
       success: true,
       rows
@@ -587,6 +647,82 @@ app.post('/getAllPropertiesWhere',  function (req, res) {
   });
 
   });
+});
 
+
+
+
+
+
+app.post('/addBooking',  function (req, res) {
+    let pid = req.body.pid;
+    let email =req.body.travellerEmail;
+    let startDate=req.body.startDate;
+    let endDate =req.body.endDate;  
+    let cost=req.body.cost;
+    let currency =req.body.currency;  
+    let city=req.body.city;
+    let owneremail=req.body.owneremail;
+
+    var booking ={
+      pid:pid,
+      uemail:email,
+      from:startDate,
+      to:endDate,
+      cost:cost,
+      currency:currency,
+      city:city,
+      owneremail:owneremail
+    }
+  
+    addNewBookingtoDatabase(booking).then(result =>{
+      res.status(200).json({
+        success: true
+      });
+   
+    })
   
 });
+
+
+app.post('/getAllBookingsOfCurrentProperty',  function (req, res) {
+  let pid = req.body.pid;
+  getAllBookingsOfCurrentProperty(pid).then(rows =>{
+    res.status(200).json({
+      success: true,
+      rows
+    });
+    console.log(rows)
+  })
+
+});
+
+
+
+
+app.post('/getAllTripsOfUser',  function (req, res) {
+  let email = req.body.email;
+
+  getAllTripsOfUser(email).then(rows =>{
+    res.status(200).json({
+      success: true,
+      rows
+    });
+ 
+  })
+
+});
+
+
+app.post('/getAllBookingsOfOwnersProperties',  function (req, res) {
+  let email = req.body.email;
+
+  getAllBookingsOfOwnersProperties(email).then(rows =>{
+    res.status(200).json({
+      success: true,
+      rows
+    });
+ 
+  })
+});
+

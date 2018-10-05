@@ -9,7 +9,6 @@ class RatesForm extends Component {
         currency:this.props.currency,
         pricepernight:this.props.pricepernight,
         minimumstay:this.props.minimumstay
-
     };
   }
 

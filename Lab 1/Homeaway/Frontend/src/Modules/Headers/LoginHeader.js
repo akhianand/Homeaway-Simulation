@@ -85,8 +85,8 @@ class LoginHeader extends Component {
 
   render() {
     let redirectVar = null;
-    console.log(cookie.load('cookie'));
-    if(cookie.load('cookie')){
+    console.log(cookie.load('email'));
+    if(cookie.load('email')){
       if(this.state.isTraveller){
       redirectVar = <Redirect to= "/TravelDash"/>
       }else if(this.state.isOwner){
