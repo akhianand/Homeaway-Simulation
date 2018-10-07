@@ -924,4 +924,14 @@ fill: #777777;
    padding: -10%;
   }
 
- 
+  .fontChange {
+    font-family: 'Roboto', sans-serif;
+   
+    color: #101010
+  }
+  
+
+  .increaseWidthLandingCard{
+   
+    margin-right:-15%;
+  }

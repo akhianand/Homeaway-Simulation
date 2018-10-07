@@ -5,10 +5,11 @@ import { Redirect } from "react-router";
 import PropertyDetailsDisplay from "./PropertyDetailsDisplay";
 import PropertyBookingPanel from "../../Components/PropertyViewPanels/BookingPanel.js";
 import PropertyBookedPanel from "../../Components/PropertyViewPanels/ViewBookingPanel";
-import OwnerPropertyPanel from "../../Components/PropertyViewPanels/OwnerViewBookings";
+import OwnerPropertyPanel from "../../Components/PropertyViewPanels/OwnerViewProperty";
 
 import LoginNav from "../Navbar/LoginNav";
 import cookie from "react-cookies";
+import OwnerBookingPanel from "../../Components/PropertyViewPanels/OwnerViewBookings";
 
 class PropertyView extends Component {
   constructor(props) {
@@ -39,7 +40,10 @@ class PropertyView extends Component {
       callfrom: "Customer",
       pid: 18,
       bookStart: null,
-      bookEnd: null
+      bookEnd: null,
+      availablefrom:null,
+      availableto:null,
+      booker:""
     };
   }
 
@@ -61,8 +65,18 @@ class PropertyView extends Component {
       this.setState({
         callfrom: "Owner",
         pid: this.props.location.state.pid,
+      
+      });
+    }else if (this.props.location.state.callfrom === "OwnerBooking") {
+      this.setState({
+        callfrom: "OwnerBooking",
+        pid: this.props.location.state.pid,
         bookStart: this.props.location.state.startDate,
-        bookEnd: this.props.location.state.endDate
+        bookEnd: this.props.location.state.endDate,
+        cost:this.props.location.state.cost,
+        currency:this.props.location.state.currency,
+        booker:this.props.location.state.booker
+      
       });
     }
     var data = {
@@ -96,8 +110,7 @@ class PropertyView extends Component {
               endDate: response.data.prop.availableto,
               pricepernight: response.data.prop.baserent,
               currency: response.data.prop.currency,
-              availablefrom: response.data.prop.availablefrom,
-              availableto: response.data.prop.availableto,
+             
               owneremail:response.data.prop.uemail
             });
           }
@@ -123,13 +136,16 @@ class PropertyView extends Component {
         />
       );
     } else if (this.state.callfrom === "Owner") {
-      <OwnerPropertyPanel
-      currency={this.state.currency}
-      pricepernight={this.state.pricepernight}
-      startDate={this.state.bookStart}
-      endDate={this.state.bookEnd}
-      pid={this.state.pid}
-    />
+      sidepanel = (
+        <OwnerPropertyPanel
+        currency={this.state.currency}
+        pricepernight={this.state.pricepernight}
+        startDate={this.state.startDate}
+        endDate={this.state.endDate}
+        pid={this.state.pid}
+      />
+      );
+     
     } else if (this.state.callfrom === "BookedCustomer") {
       sidepanel = (
         <PropertyBookedPanel
@@ -140,7 +156,21 @@ class PropertyView extends Component {
           pid={this.state.pid}
         />
       );
-    }
+    }    if (this.state.callfrom === "OwnerBooking") {
+      //Customer is Viewing Property
+      sidepanel = (
+        <OwnerBookingPanel
+          currency={this.state.currency}
+          pricepernight={this.state.pricepernight}
+          bookingfrom={this.state.bookStart}
+          bookingto={this.state.bookEnd}
+          cost={this.state.cost}
+          pid={this.state.pid}
+          booker={this.state.booker}
+          owneremail={this.state.owneremail}
+        />
+      );
+    } 
     let redirectVar = null;
 
     if (this.state.BookingAddedSucessfully) {

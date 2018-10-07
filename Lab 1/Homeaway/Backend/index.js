@@ -11,10 +11,11 @@ var session = require('express-session');
 var multer =require('multer');
 var mkdirp =require('mkdirp');
 
-
 var storage =multer.diskStorage({
   destination:function(req,file,callback){
-    const dir ="uploads/akhileshmalini@gmail.com/"
+
+
+    const dir ="uploads/"+req.body.email+"/"
     mkdirp(dir, err => callback(null,dir))
     
   },
@@ -25,6 +26,7 @@ var storage =multer.diskStorage({
   }
 });
 var upload =multer({storage:storage});
+
 
 
 app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
@@ -79,7 +81,7 @@ var server = app.listen(8000, function() {
     console.log("Server listening on port 8000");
   });
 /* -----------------------------------------------------------------------------------------------------------
-                                                     Methods             
+                                                     QUERIES             
 -----------------------------------------------------------------------------------------------------------*/
 
 
@@ -497,6 +499,7 @@ app.post('/getUserInfo', function (req, res) {
 });
 
 
+
 app.post('/addProperty',upload.array('photos'),function(req,res,next){
         const adl1= req.body.adl1;
        const adl2=req.body.adl2;
@@ -516,6 +519,7 @@ app.post('/addProperty',upload.array('photos'),function(req,res,next){
         const minimumstay=req.body.minimumstay;
         const availablefrom =req.body.startDate;
         const availableto=req.body.endDate;
+        const email=req.body.email;
 
         let filenamearray =[];
         req.files.forEach(file => {
@@ -546,7 +550,7 @@ app.post('/addProperty',upload.array('photos'),function(req,res,next){
             availablefrom : availablefrom,
             availableto: availableto,
             photos:photos,
-            uemail:"akhileshmalini@gmail.com"
+            uemail:email
 
 
         }
@@ -567,7 +571,7 @@ app.post('/addProperty',upload.array('photos'),function(req,res,next){
 
 
 app.post('/getAllPropertiesOfUser', function (req, res) {
-  const email = "akhileshmalini@gmail.com";
+  const email = req.body.email;
   getAllPropertyFromDatabase(email).then(rows=>{
     res.status(200).json({
       success: true,

@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import "react-dates/initialize";
 import axios from "axios";
-import { Redirect } from "react-router";
 import cookie from "react-cookies";
 import moment from "moment";
 import {withRouter, Link} from "react-router-dom";

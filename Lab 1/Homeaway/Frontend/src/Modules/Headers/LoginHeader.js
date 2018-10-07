@@ -151,14 +151,7 @@ class LoginHeader extends Component {
                 </button>
                 <br />
                 <br />
-                <div className="form-check ">
-                  <input
-                    type="checkbox"
-                    className="form-check-input sharpEdges"
-                    id="exampleCheck1"
-                  />
-                  <label className="form-check-label">Keep me signed in</label>
-                </div>
+       
               </form>
             </div>
             <br />

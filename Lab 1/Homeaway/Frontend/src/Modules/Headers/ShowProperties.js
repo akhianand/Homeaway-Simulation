@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import "react-dates/initialize";
 import axios from "axios";
 import { Redirect } from "react-router";
-import LoginNav from "../../Modules/Navbar/LoginNav";
 import MapComponent from "../../Components/MapComponent";
 import {withRouter} from "react-router-dom";
 
@@ -13,6 +12,7 @@ import moment from "moment";
 import "react-dates/initialize";
 import "react-dates/lib/css/_datepicker.css";
 import cookie from 'react-cookies';
+import OtherNav from "../Navbar/OtherNav";
 
 class ShowAllProperties extends Component {
   constructor(props) {
@@ -30,9 +30,12 @@ class ShowAllProperties extends Component {
   }
 
   onSearchClickedListener = () => {
-    this.setState({
-      searchedClicked: true
-    });
+    var data = {
+      where: this.state.where,
+      people: this.state.people
+    };
+ 
+    this.search(data)
   };
 
   datesChageHandler = ({ startDate, endDate }) => {
@@ -65,11 +68,9 @@ class ShowAllProperties extends Component {
 
   }
 
-  componentDidMount(){
-    var data = {
-      where: this.state.where,
-      people: this.state.people
-    };
+
+  search(data){
+    console.log(data);
     axios.defaults.withCredentials = true;
     axios
       .post("http://localhost:8000/getAllPropertiesWhere", data)
@@ -82,7 +83,7 @@ class ShowAllProperties extends Component {
               let avf =moment(row.availablefrom);
               let avt =moment(row.availableto);
     
-               if((this.state.endDate.diff(avf, "days")>=0)){
+               if((this.state.endDate.diff(avf, "days")>=0) && (this.state.endDate.diff(avt, "days")<=0)&&(this.state.startDate.diff(avf, "days")>=0)){
                
                 filteredRows.push(row)
                }
@@ -94,6 +95,15 @@ class ShowAllProperties extends Component {
           }
         }
       });
+  }
+
+  componentDidMount(){
+    var data = {
+      where: this.state.where,
+      people: this.state.people
+    };
+ 
+    this.search(data)
   }
 
 
@@ -112,11 +122,10 @@ class ShowAllProperties extends Component {
     if(this.state.properties.length>0){
       properties = this.state.properties.map(property => {
       var arr = property.photos.split(",");
-      let ImageUrl = "./uploads/akhileshmalini@gmail.com/" + arr[0];
+      let ImageUrl = "./uploads/"+property.uemail+"/" + arr[0];
 
       return (
-        
-          <div className="col-6">
+          <div>
             <div key={property.pid} className="card"
             onClick={() => {
               this.setState({
@@ -144,16 +153,19 @@ class ShowAllProperties extends Component {
                       {property.accomodates}
                       <br />
                       <br />
-                      <div style={{background:"#e6e6e6"}}>
+                     
+                    </p>
+                    <div style={{background:"#e6e6e6"}}>
                       &nbsp;&nbsp;&nbsp;{property.baserent}
                       {property.currency} <small>per Night</small>
                       </div>
-                    </p>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
+               <br />
+               <br />
+               </div>
 
       );
     });
@@ -186,13 +198,14 @@ class ShowAllProperties extends Component {
     return (
       <div>
         {redirectVar}
-        <LoginNav />
+        <OtherNav />
         <br />
         <br />
         <br />
         <br />
         <br />
         <br />
+ 
 
         <div className="container">
           <div className="card  increaseWidthBothSidesLesser">
@@ -258,8 +271,9 @@ class ShowAllProperties extends Component {
           <br />
           <br />
           <div className="row increaseWidthBothSidesLesser">
-          {properties}
-          <div id="map" className="col-6">
+               <div className="col-6">{properties}  
+        </div>
+          <div id="map" className="col-6 fixhere">
           <MapComponent/>
           </div>
           </div>

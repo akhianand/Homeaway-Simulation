@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import "react-dates/initialize";
 import axios from "axios";
 import cookie from 'react-cookies';
+import {withRouter} from 'react-router-dom';
+
 
 class Profile extends Component {
   constructor(props) {
@@ -21,7 +23,9 @@ class Profile extends Component {
       phonenumber:"",
       userAdded: false,
       userAddingError: false,
-      userAddingErrorMessage: ""
+      userAddingErrorMessage: "",
+      viewProfileClicked:false
+
 
 
     
@@ -39,6 +43,8 @@ class Profile extends Component {
     this.languagesChangeHandler = this.languagesChangeHandler.bind(this);
     this.genderChangeHandler = this.genderChangeHandler.bind(this);
     this.phonenumberChangeHandler = this.phonenumberChangeHandler.bind(this);
+    this.onViewProfileClicked = this.onViewProfileClicked.bind(this);
+
   }
 
   componentDidMount() {
@@ -72,6 +78,12 @@ class Profile extends Component {
   });
 }
 
+
+    onViewProfileClicked = e=>{
+      this.setState({
+        viewProfileClicked:true
+      })
+    }
     fnameChangeHandler = e => {
       this.setState({
         fname: e.target.value
@@ -180,9 +192,20 @@ class Profile extends Component {
   
   render() {
 
+    let redirectVar =null;
+
+    if(this.state.viewProfileClicked){
+      redirectVar=  this.props.history.push({
+        pathname: '/ViewProfile',
+        state: {
+          email: cookie.load("email")
+        }   
+    }) 
+    }
+
     return (
       <div>
-     
+        {redirectVar}
       <div className="container">
         <br />
         <br />
@@ -359,12 +382,15 @@ class Profile extends Component {
           <div className="col-4">
             <div className="card">
               <div className="card-body text-center">
+              
                 <button
                   type="button"
                   className="viewProfileButton btn btn-primary btn-lg btn-block"
+                  onClick={this.onViewProfileClicked}
                 >
                   View Profile
                 </button>
+          
               </div>
             </div>
           </div>
@@ -382,4 +408,4 @@ class Profile extends Component {
   }
 }
 
-export default Profile;
+export default withRouter(Profile);

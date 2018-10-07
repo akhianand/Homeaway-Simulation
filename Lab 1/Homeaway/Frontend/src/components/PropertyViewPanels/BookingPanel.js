@@ -149,7 +149,6 @@ class PropertyBookingPanel extends Component {
     if(this.state.BookingAddedSucessfully){
       redirectVar = <Redirect to= "/TravelDash"/>
     }
-    var printonce=true;
 
 
  //Fetch Dates When Available

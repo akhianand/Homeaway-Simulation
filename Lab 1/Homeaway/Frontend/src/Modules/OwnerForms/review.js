@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import axios from "axios";
 import { Redirect } from "react-router";
+import cookie from 'react-cookies';
 
 class ReviewForm extends Component {
   constructor(props, context) {
@@ -30,7 +31,8 @@ class ReviewForm extends Component {
       isuploading: false,
       errorState: false,
       errorMessage: [],
-      propertyAddedSucessfully: false
+      propertyAddedSucessfully: false,
+      email:cookie.load("email")
     };
   }
 
@@ -152,7 +154,8 @@ class ReviewForm extends Component {
       pricepernight: this.state.pricepernight,
       minimumstay: this.state.minimumstay,
       startDate: startDate,
-      endDate: endDate
+      endDate: endDate,
+      email:cookie.load("email")
     };
 
     this.checkValidation(data)
@@ -161,12 +164,13 @@ class ReviewForm extends Component {
 
         if (go && imagecount >= 2) {
           let formData = new FormData();
-          this.state.imagefiles.forEach(element => {
-            formData.append("photos", element);
-          });
           Object.keys(data).forEach(function(key) {
             formData.append(key, data[key]);
           });
+          this.state.imagefiles.forEach(element => {
+            formData.append("photos", element);
+          });
+
           axios.defaults.withCredentials = true;
           axios
             .post("http://localhost:8000/addProperty", formData)

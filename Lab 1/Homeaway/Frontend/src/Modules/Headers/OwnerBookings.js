@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import "react-dates/initialize";
 import axios from "axios";
-import { Redirect } from "react-router";
 import cookie from "react-cookies";
 import moment from "moment";
 import {withRouter, Link} from "react-router-dom";
@@ -15,7 +14,9 @@ class OwnerBookings extends Component {
       propertypid:"",
       propertybid:0,
       bookingFrom:null,
-      bookingTo:null
+      bookingTo:null,
+      cost:0,
+      booker:""
 
     };
   }
@@ -93,7 +94,10 @@ onViewPropertyClickHandler = (e) =>{
                                   propertypid:property.pid,
                       bookingFrom:property.from,
                       bookingTo:property.to,
-                      propertyClicked:true
+                      propertyClicked:true,
+                      cost:property.cost,
+                      booker:property.uemail
+
                 })} className="btn btn-primary text-white">
                   View Booking
                 </a>
@@ -118,9 +122,13 @@ onViewPropertyClickHandler = (e) =>{
             pathname: "/PropertyView",
             state: {
               pid: this.state.propertypid,
-              callfrom: "Owner",
+              callfrom: "OwnerBooking",
               startDate:this.state.bookingFrom,
-              endDate:this.state.bookingTo
+              endDate:this.state.bookingTo,
+              cost:this.state.cost,
+              booker:this.state.booker
+
+
             }
           })
         

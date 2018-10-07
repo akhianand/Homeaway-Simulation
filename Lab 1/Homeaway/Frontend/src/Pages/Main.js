@@ -9,6 +9,7 @@ import OwnerDash from './Owners/OwnersDash';
 import PropertyView from '../Modules/Headers/PropertyView';
 import OwnerPropertyAdd from './Owners/OwnersAddProperty';
 import ShowAllProperties from '../Modules/Headers/ShowProperties';
+import ViewProfile from '../Modules/Headers/ViewProfile';
 
 class Main extends Component {
     render(){
@@ -24,6 +25,7 @@ class Main extends Component {
                 <Route path="/OwnerDash" component={OwnerDash}/>
                 <Route path="/PropertyView" component={PropertyView}/>
                 <Route path="/Properties" component={ShowAllProperties}/>
+                <Route path="/ViewProfile" component={ViewProfile}/>
                 {/* <Route  component={Error}/> */}
             </Switch>
             </BrowserRouter>
@@ -32,4 +34,3 @@ class Main extends Component {
 }   
 //Export The Main Component
 export default Main;
-
