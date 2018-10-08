@@ -562,6 +562,9 @@ app.post("/login", function(req, res) {
                 success: true,
                 email
               });
+              console.log(
+                "Logged in Sucessfully with "+email
+              );
             } else {
               res.status(200).json({
                 success: false,
@@ -689,6 +692,7 @@ app.post("/getAllPropertiesOfUser", function(req, res) {
   const email = req.body.email;
   getAllPropertyFromDatabase(email)
     .then(rows => {
+      console.log(rows)
       res.status(200).json({
         success: true,
         rows
@@ -801,7 +805,9 @@ app.post("/addBooking", function(req, res) {
     owneremail: owneremail
   };
 
+
   addNewBookingtoDatabase(booking).then(result => {
+    console.log("Property Added SucessFully");
     res.status(200).json({
       success: true
     });
@@ -840,3 +846,5 @@ app.post("/getAllBookingsOfOwnersProperties", function(req, res) {
     });
   });
 });
+
+
