@@ -206,6 +206,8 @@ class PropertyView extends Component {
                 accomdates={this.state.accomdates}
                 images={this.state.images}
                 minimumstay={this.state.minimumstay}
+                email={this.state.owneremail}
+
               />
             </div>
 

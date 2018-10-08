@@ -32,7 +32,9 @@ class ShowAllProperties extends Component {
   onSearchClickedListener = () => {
     var data = {
       where: this.state.where,
-      people: this.state.people
+      people: this.state.people,
+      startDate:this.state.startDate,
+      endDate:this.state.endDate
     };
  
     this.search(data)
@@ -76,21 +78,9 @@ class ShowAllProperties extends Component {
       .post("http://localhost:8000/getAllPropertiesWhere", data)
       .then(response => {
         if (response.status === 200) {
-          console.log(response.data);
           if (response.data.success) {
-            let filteredRows =[];
-            response.data.rows.forEach(row => {
-              let avf =moment(row.availablefrom);
-              let avt =moment(row.availableto);
-    
-               if((this.state.endDate.diff(avf, "days")>=0) && (this.state.endDate.diff(avt, "days")<=0)&&(this.state.startDate.diff(avf, "days")>=0)){
-               
-                filteredRows.push(row)
-               }
-            });
-            console.log(response.data.rows);
             this.setState({
-              properties: filteredRows
+              properties: response.data.filteredRows
             });
           }
         }
@@ -100,7 +90,9 @@ class ShowAllProperties extends Component {
   componentDidMount(){
     var data = {
       where: this.state.where,
-      people: this.state.people
+      people: this.state.people,
+      startDate:this.state.startDate,
+      endDate:this.state.endDate
     };
  
     this.search(data)
@@ -147,9 +139,9 @@ class ShowAllProperties extends Component {
                       {this.capitalizeFirstLetter(property.type)}
                       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                       {property.bedrooms}
-                      BR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      Bed&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                       {property.bathrooms}
-                      BR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sleeps&nbsp;
+                      Bath&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sleeps&nbsp;
                       {property.accomodates}
                       <br />
                       <br />
@@ -273,7 +265,7 @@ class ShowAllProperties extends Component {
           <div className="row increaseWidthBothSidesLesser">
                <div className="col-6">{properties}  
         </div>
-          <div id="map" className="col-6 fixhere">
+          <div id="map" className="col-6 ">
           <MapComponent/>
           </div>
           </div>

@@ -935,3 +935,7 @@ fill: #777777;
    
     margin-right:-15%;
   }
+
+  .fixhere{
+    position: fixed;
+  }

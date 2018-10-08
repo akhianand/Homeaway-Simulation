@@ -30,7 +30,7 @@ class PropertyView extends Component {
 
   
   render() {
-    let email = cookie.load("email");
+    let email = this.props.email;
     var images = this.props.images.split(",");
     let imagesarray = images.map(image => {
     let ImageUrl = "./uploads/" + email + "/" + image;

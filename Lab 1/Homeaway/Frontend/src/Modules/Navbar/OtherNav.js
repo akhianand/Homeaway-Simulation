@@ -19,6 +19,7 @@ class OtherNav extends Component {
 
     
   render() {
+    let email = cookie.load("email");
       let redirectVar=null
         if(this.state.OwnerLoginClicked){
         redirectVar = <Redirect to= "/OwnerLogin"/>
@@ -52,7 +53,7 @@ class OtherNav extends Component {
           aria-expanded="false"
           href=""
         >
-          Logout
+         {email}
         </a>
         <div className="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
           <a
