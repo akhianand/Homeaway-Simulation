@@ -150,6 +150,20 @@ class PropertyBookingPanel extends Component {
       redirectVar = <Redirect to= "/TravelDash"/>
     }
 
+    function checkForBlockedDates(start, end, dates) {
+      const dateFormat = 'YYYY-MM-DD';
+      const diff = moment(end).diff(start, 'days') + 1;
+    
+      for (let i = 0; i < diff; i++) {
+        const checkDate = moment(start).add(i, 'd').format(dateFormat);
+    
+        if (dates[checkDate] && dates[checkDate].blocked) {
+          return true;
+        }
+      }
+    
+      return false;
+    }
 
  //Fetch Dates When Available
  let isOutsideRange = day => {
@@ -207,6 +221,10 @@ class PropertyBookingPanel extends Component {
           <a  onClick={this.bookProperty} className="btn btn-primary text-white">
                 Book Property 
           </a>
+
+       
+
+
         </div>
       </div>
       </div>

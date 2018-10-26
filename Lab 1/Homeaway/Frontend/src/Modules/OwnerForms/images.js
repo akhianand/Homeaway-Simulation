@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import "react-dates/initialize";
 import Dropzone from "react-dropzone";
-
+import {v4} from "node-uuid"
 
 
 
@@ -94,7 +94,6 @@ class ImagesForm extends Component {
                     className="dropzone"
                     multiple={true}
                     accept="image/jpeg, image/png"
-                    maxSize={this.maxSize}
                     onDrop={this.handleOnDrop}
                   >
                     <br />
