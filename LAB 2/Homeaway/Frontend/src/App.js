@@ -11,7 +11,6 @@ import OwnerAddPropertyPage from './Containers/Pages/OwnerAddPropertyPage';
 import ShowAllPropertiesPage from './Containers/Pages/ShowAllPropertiesPage';
 import ViewProfilePage from './Containers/Pages/ViewProfilePage';
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faGhost, faEnvelope, faLocationArrow } from '@fortawesome/free-solid-svg-icons'
 
 library.add(faEnvelope,faGhost, faLocationArrow)

@@ -1,33 +1,28 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import SignUpComponent from "../../../Components/SignUpComponent";
-import {signUp} from "../../../Actions/userActions";
+import { signUp } from "../../../Actions/userActions";
 import { withRouter } from "react-router-dom";
-import { Redirect } from "react-router";
 
 class SignUpHeader extends Component {
-
   onSignUpClickListener = values => {
-    this.props.signUp(values).then((res)=>{
-      console.log("Signed Up Sucessfully");
-    }).catch((err)=>{
-      console.log("Signed Up Error", err);
-      
-    });
+    this.props
+      .signUp(values)
+      .then(res => {
+        console.log("Signed Up Sucessfully");
+      })
+      .catch(err => {
+        console.log("Signed Up Error", err);
+      });
   };
 
   render() {
-    let redirectVar = null;
     if (this.props.tokenState.validity) {
       this.props.history.push({
         pathname: "/TravelDash"
       });
     }
-    
-
-
     return (
-
       <div>
         <div>
           <header className="loginbg">
@@ -40,14 +35,16 @@ class SignUpHeader extends Component {
                 </h5>
                 <br />
                 <div className="card text-left somePadding">
-                {this.props.signUpState.error ? (
-                    <div className="alert alert-danger"  role="alert">
-                 {this.props.signUpState.errorMessage}
-                </div>      ) : (null)}
-                {this.props.signUpState.added ? (
-                    <div className="alert alert-success"  role="alert">
-                 Sign-Up Successful, You can Log In
-                </div>      ) : (null)}
+                  {this.props.signUpState.error ? (
+                    <div className="alert alert-danger" role="alert">
+                      {this.props.signUpState.errorMessage}
+                    </div>
+                  ) : null}
+                  {this.props.signUpState.added ? (
+                    <div className="alert alert-success" role="alert">
+                      Sign-Up Successful, You can Log In
+                    </div>
+                  ) : null}
                   <SignUpComponent onSubmit={this.onSignUpClickListener} />
                 </div>
                 <br />

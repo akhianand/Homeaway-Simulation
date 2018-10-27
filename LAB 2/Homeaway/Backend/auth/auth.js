@@ -11,9 +11,9 @@ passport.use(
       usernameField: "email",
       passwordField: "password"
     },
-    async (email, password,done) => {
+    async (email, password, done) => {
       try {
-        const user = await UserModel.create({ email, password});
+        const user = await UserModel.create({ email, password });
         return done(null, user);
       } catch (error) {
         done(error);
@@ -55,10 +55,8 @@ passport.use(
     },
     async (token, done) => {
       try {
-        console.log(token.user);
         return done(null, token.user);
       } catch (error) {
-        console.log(error);
         done(error);
       }
     }

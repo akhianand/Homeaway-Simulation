@@ -9,13 +9,11 @@ class PropertiesHeader extends Component {
     this.props.getAllPropertiesOfUser();
   }
 
-
-
-
   render() {
     let properties = this.props.propertyState.properties.map(property => {
       return (
-        <div key={property._id} className="card shadow-lg">
+        <div key={property._id} >
+        <div className="card shadow-lg">
           <div className="card-body">
             <h4 className="card-title">{property.headline}</h4>
             <p className="card-text">
@@ -35,6 +33,9 @@ class PropertiesHeader extends Component {
               View Property
             </a>
           </div>
+
+        </div>
+        <br/><br/>
         </div>
       );
     });

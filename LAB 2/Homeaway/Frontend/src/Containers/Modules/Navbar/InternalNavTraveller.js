@@ -1,7 +1,5 @@
 import React, { Component } from "react";
 import "react-dates/initialize";
-import cookie from 'react-cookies';
-import { Redirect } from "react-router";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 

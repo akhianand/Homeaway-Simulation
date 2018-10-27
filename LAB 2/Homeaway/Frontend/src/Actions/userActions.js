@@ -7,6 +7,8 @@ export const TOKEN_INVALID = "token_invalid";
 export const TOKEN_NOEXIST = "token_noexist";
 export const ADDED = "add_user";
 export const ADDING_ERROR = "add_error";
+export const PROFILE_FETCHED = "profile_user";
+export const PROFILE_ERROR = "profile_error";
 
 
 const ROOT_URL = "http://localhost:8000";
@@ -70,11 +72,6 @@ export function signUp(data) {
   return async dispatch => {
       await axios.post(`${ROOT_URL}/signup`, data).then((response)=>{
         if (response.status === 200) {
-          const d = {
-            email: data.email,
-            password: data.password
-          };
-          login(d);
         dispatch({
           type: ADDED,
           payload: "User Signed Up Sucessfully"
@@ -96,4 +93,32 @@ export function signUp(data) {
   
   };
 }
+
+
+export function fetchUserData(email) {
+  return async dispatch => {
+      await axios.post(`${ROOT_URL}/getUserProfile`, email).then((response)=>{
+        if (response.status === 200) {
+        dispatch({
+          type: PROFILE_FETCHED,
+          payload: response.data
+        });
+      }else{
+        dispatch({
+          type: PROFILE_ERROR,
+          payload: "An Error Occoured"
+        });
+      }
+      }).catch((err)=>{
+        console.log(err);
+        dispatch({
+          type: PROFILE_ERROR,
+          payload: "An Error Occoured"
+        });
+      });
+     
+  
+  };
+}
+
 

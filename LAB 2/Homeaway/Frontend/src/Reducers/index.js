@@ -7,7 +7,7 @@ import PropertyDisplay from "./reducer_propertyDisplay";
 import SearchPropertyReducer from "./reducer_searchProperties";
 import SignUpReducer from "./reducer_signUp";
 import BookingReducer from "./reducer_booking";
-
+import ProfileReducer from "./reducer_Profile";
 import TokenReducer from "./reducer_token";
 
 const rootReducer = combineReducers({
@@ -19,6 +19,7 @@ const rootReducer = combineReducers({
   SearchPropertyReducer,
   SignUpReducer,
   BookingReducer,
+  ProfileReducer,
   form: formReducer
 });
 export default rootReducer;

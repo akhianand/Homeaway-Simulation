@@ -45,9 +45,9 @@ class PropertyBookingPanel extends Component {
         };
         this.props.createNewBooking(bookingData).then(() => {
           console.log("Booking Added Successfully", this.props.bookingState);
-          this.props.history.push({
-            pathname: "/TravelDash"
-          });
+          // this.props.history.push({
+          //   pathname: "/TravelDash"
+          // });
         });
 
         console.log(bookingData);
@@ -92,7 +92,11 @@ class PropertyBookingPanel extends Component {
 
   findIntersections(a, b) {
     let temp;
-    if (b.length > a.length) (temp = b), (b = a), (a = temp);
+    if (b.length > a.length) {
+      temp = b;
+      b = a;
+      a = temp;
+    }
     return a.filter(function(e) {
       return b.indexOf(e) > -1;
     });
@@ -180,7 +184,6 @@ class PropertyBookingPanel extends Component {
               focusedInput={this.state.focusedInput}
               onFocusChange={focusedInput => this.setState({ focusedInput })}
             />
-
             <div>
               <small>
                 {this.props.propertyDisplay.property.baserent}

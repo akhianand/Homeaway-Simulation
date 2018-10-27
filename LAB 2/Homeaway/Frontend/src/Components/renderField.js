@@ -65,3 +65,18 @@ export const renderFieldSharp = ({ input, label, maxLength, type, meta: { touche
     </div>
   </div>
 );
+
+export const renderFieldMedium = ({ input, label, maxLength, type, meta: { touched, error } }) => (
+  <div>
+    <div>
+      <input
+        {...input}
+        placeholder={label}
+        type={type}
+        className="form-control form-control-md"
+        maxLength={maxLength}
+      />
+      {touched && error && <span className="text-danger">{error}</span>}
+    </div>
+  </div>
+);

@@ -1,17 +1,14 @@
 import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 import moment from "moment";
-import SearchPropertyForm from "../../Components/SearchComponent";
 import {
   getPropertiesWhere,
   searchParams
 } from "../../Actions/propertyActions";
 import { connect } from "react-redux";
-import { Redirect } from "react-router";
 import { checkValidity } from "../../Actions/userActions";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import SearchNav from "../Modules/Navbar/SearchNav";
-
 moment.suppressDeprecationWarnings = true;
 
 class ShowAllPropertiesPage extends Component {
@@ -23,11 +20,9 @@ class ShowAllPropertiesPage extends Component {
       propertypid: ""
     };
   }
-
   componentDidMount() {
     this.props.checkValidity();
   }
-
   render() {
     if (this.props.isValidTokenState !== undefined) {
       if (!this.props.isValidTokenState) {

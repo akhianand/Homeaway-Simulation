@@ -2,6 +2,7 @@ const express = require("express");
 const passport = require("passport");
 const jwt = require("jsonwebtoken");
 const router = express.Router();
+var kafka = require('./kafka/client');
 
 const UserModel = require("../model/usermodel");
 
@@ -40,9 +41,6 @@ router.post("/signup", async (req, res, next) => {
   })(req, res, next);
 });
 
-// => {
-
-// }
 
 router.post("/login", async (req, res, next) => {
   passport.authenticate("login", async (err, user, info) => {
@@ -80,15 +78,18 @@ router.get("/uploads/:email/:photo", function(req, res, next) {
       "x-sent": true
     }
   };
-  console.log(options);
   var fileName = req.params.photo;
   res.sendFile(fileName, options, function(err) {
     if (err) {
       next(err);
     } else {
-      console.log("Sent:", fileName);
     }
   });
 });
+
+
+
+
+
 
 module.exports = router;

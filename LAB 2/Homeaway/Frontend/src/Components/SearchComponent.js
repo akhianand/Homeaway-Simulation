@@ -117,7 +117,8 @@ function mapStateToProps(state) {
 
 SearchPropertyForm = reduxForm({
   form: "searchPropertyForm",
-  enableReinitialize: true
+  enableReinitialize: true,
+  keepDirtyOnReinitialize:true
 })(SearchPropertyForm);
 
 export default connect(mapStateToProps)(SearchPropertyForm);

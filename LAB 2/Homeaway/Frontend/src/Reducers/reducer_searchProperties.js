@@ -4,7 +4,6 @@ import {
   SEARCH_BLANK,
   SEARCH_PARAMS
 } from "../Actions/propertyActions";
-import moment from "moment";
 
 
 export default function(
