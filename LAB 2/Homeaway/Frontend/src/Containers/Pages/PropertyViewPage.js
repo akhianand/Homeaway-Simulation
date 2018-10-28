@@ -6,13 +6,23 @@ import PropertyBookingPanel from "../../Components/PropertyViewPanels/BookingPan
 import PropertyBookedPanel from "../../Components/PropertyViewPanels/ViewBookingPanel";
 import OwnerPropertyPanel from "../../Components/PropertyViewPanels/OwnerViewProperty";
 import OwnerBookingPanel from "../../Components/PropertyViewPanels/OwnerViewBookings";
+import { checkValidity } from "../../Actions/userActions";
+import { withRouter } from "react-router-dom";
+import { connect } from "react-redux";
 
 class PropertyViewPage extends Component {
   componentWillMount() {
-    console.log(this.props.location.state.pid);
+    this.props.checkValidity();
   }
 
   render() {
+    if (this.props.isValidTokenState !== undefined) {
+      if (!this.props.isValidTokenState) {
+        this.props.history.push({
+          pathname: "/Login"
+        });
+      }
+    }
     //Sidepanel Changes Based on Weather its Travellere or Owner of Said Property
     let sidepanel = null;
     if (this.props.location.state.callfrom === "Customer") {
@@ -20,14 +30,14 @@ class PropertyViewPage extends Component {
     } else if (this.props.location.state.callfrom === "Owner") {
       sidepanel = <OwnerPropertyPanel />;
     } else if (this.props.location.state.callfrom === "BookedCustomer") {
-      sidepanel = <PropertyBookedPanel />;
+      sidepanel = <PropertyBookedPanel bid={this.props.location.state.bid} />;
     } else if (this.props.location.state.callfrom === "OwnerBooking") {
-      sidepanel = <OwnerBookingPanel />;
+      sidepanel = <OwnerBookingPanel bid={this.props.location.state.bid} />;
     }
 
     return (
       <div>
-                <SearchNav />
+        <SearchNav />
 
         <div className="container">
           <div className="row">
@@ -44,4 +54,15 @@ class PropertyViewPage extends Component {
   }
 }
 
-export default PropertyViewPage;
+function mapStateToProps(state) {
+  return {
+    tokenState: state.TokenReducer
+  };
+}
+
+export default withRouter(
+  connect(
+    mapStateToProps,
+    { checkValidity }
+  )(PropertyViewPage)
+);

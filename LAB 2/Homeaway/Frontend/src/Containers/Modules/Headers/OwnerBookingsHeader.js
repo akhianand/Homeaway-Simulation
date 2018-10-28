@@ -1,154 +1,144 @@
+
+
 import React, { Component } from "react";
 import "react-dates/initialize";
-import axios from "axios";
-import cookie from "react-cookies";
-import moment from "moment";
-import {withRouter, Link} from "react-router-dom";
+import { withRouter, Link } from "react-router-dom";
+import { getOwnerBookings } from "../../../Actions/bookingActions";
+import { checkValidity } from "../../../Actions/userActions";
 
+import { connect } from "react-redux";
+import moment from "moment";
 class OwnerBookingsHeader extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      properties:[],
-      propertyClicked:false,
-      propertypid:"",
-      propertybid:0,
-      bookingFrom:null,
-      bookingTo:null,
-      cost:0,
-      booker:""
-
+      properties: [],
+      propertyClicked: false,
+      propertypid: "",
+      propertybid: 0,
+      bookingFrom: null,
+      bookingTo: null
     };
   }
 
 
 
-  componentDidMount(){
-       
-    const data = {
-        email: cookie.load("email"),
-
-    };
-    axios.defaults.withCredentials = true;
-
-    axios.post('http://localhost:8000/getAllBookingsOfOwnersProperties',data)
-            .then((response) => {
-              if(response.status===200){
-               if(response.data.success){
-                 this.setState({
-                   properties: response.data.rows
-                })
-               }
-              }
+  componentWillMount(){
+    this.props.checkValidity(() => {
+      if (this.props.tokenState.validity) {
+        this.props.history.push({
+          pathname: "/OwnerLogin"
         });
-}
-
-onViewPropertyClickHandler = (e) =>{
-  console.log(e.currentTarget.value);
-//   this.setState({
-//     propertyClicked: true,
-//     propertypid:pid
-//  });
-}
- getFormattedDate(dt) {
-    let date= dt.toDate();
-    var year = date.getFullYear();
-  
-    var month = (1 + date.getMonth()).toString();
-    month = month.length > 1 ? month : '0' + month;
-  
-    var day = date.getDate().toString();
-    day = day.length > 1 ? day : '0' + day;
-    
-    return month + '/' + day + '/' + year;
-  }
-
-
-
-  render() {
-    let properties=null;
-    if(this.state.properties.length===0){
-      properties=        <div className="col-12 text-center">
-      <h2>No Bookings Made</h2>
-      <br/><br/>
-      <Link to="/">
-      <button type="button" class="btn btn-primary btn-lg ">Search Homeaway</button>
-
-              </Link>
-
-      </div>
-
-    }else{
-     properties = this.state.properties.map(property => {
-   
-     
-      return(
-        <div className="col-12">
-        <div class="card shadow-lg">
-        <h5 class="card-header">Booking Reference: {property.bid}</h5>
-        <div class="card-body">
-          <h5 class="card-title">{this.getFormattedDate(moment(property.from))} to {this.getFormattedDate(moment(property.to))} </h5>
-          <p class="card-text"> @ your Property in <b>{property.city}</b></p>
-          <p class="card-text">Income <b>{property.cost}{property.currency}</b></p>
-          <a  onClick={()=>this.setState({
-                                  propertypid:property.pid,
-                      bookingFrom:property.from,
-                      bookingTo:property.to,
-                      propertyClicked:true,
-                      cost:property.cost,
-                      booker:property.uemail
-
-                })} className="btn btn-primary text-white">
-                  View Booking
-                </a>
-        </div>
-      </div>
-      <br/><br/>
-      </div>
-      )
-      
-
+      }
     });
 
-
+  }
+  componentDidMount() {
+    this.props.getOwnerBookings(localStorage.getItem("username")).then(()=>{
+      console.log(this.props.ownerBookings.bookings);
+    });
   }
 
-
-    let redirectVar = null;
-    if(this.state.propertyClicked){
-
-      redirectVar = (
-        this.props.history.push({
-            pathname: "/PropertyView",
-            state: {
-              pid: this.state.propertypid,
-              callfrom: "OwnerBooking",
-              startDate:this.state.bookingFrom,
-              endDate:this.state.bookingTo,
-              cost:this.state.cost,
-              booker:this.state.booker
-
-
-            }
-          })
-        
+  render() {
+    let bookings = null;
+    if (this.props.ownerBookings.bookings.length === 0) {
+      bookings = (
+        <div className="col-12 text-center">
+          <h2>No Bookings Made</h2>
+          <br />
+          <br />
+          <Link to="/">
+            <button type="button" className="btn btn-primary btn-lg ">
+              Search Homeaway
+            </button>
+          </Link>
+        </div>
       );
-  }
+    } else {
+      bookings = this.props.ownerBookings.bookings.map(booking => {
+        let from = moment(new Date(booking.bookingfrom)).format('MM/DD/YYYY');;
+        let to = moment(new Date(booking.bookingto)).format('MM/DD/YYYY');;
+        let status= null;
+        if(Date.now()> new Date(booking.bookingto)){
+          status=<small className="text-danger">This Booking has Elapsed</small>
+        }else if(Date.now()>= new Date(booking.bookingfrom)>= new Date(booking.bookingto)){
+          status=<small className="text-neutral">This Booking is Ongoing</small>
+        }else if(Date.now()< new Date(booking.bookingfrom)){
+          status=<small className="text-success">This Booking is Pending</small>
 
+
+        }
+        return (
+          <div key={booking._id} className="col-12">
+            <br />
+            <br />
+            <div className="card shadow-lg">
+              <h5 className="card-header">Booking Reference: {booking._id}</h5>
+              <div className="card-body">
+              {status}<br></br>
+
+                <h5 className="card-title">
+                  {from}&nbsp;&nbsp;to&nbsp;&nbsp;
+                 {to}
+                </h5>
+                <p className="card-text">
+                  Homeaway @ <b>{booking.city}</b>
+                </p>
+                <p className="card-text">
+              <b>{booking.propertyname}</b>
+                </p>
+                
+                <p className="card-text">
+                  Income
+                  <b>&nbsp;
+                    {booking.cost}
+                    {booking.currency}
+                  </b>
+                </p>
+             
+                <a
+                    
+                    onClick={() => {
+                      this.props.history.push({
+                        pathname: "/PropertyView",
+                        state: {
+                          pid: booking.propertyid,
+                          bid:booking._id,
+                          callfrom: "OwnerBooking"
+                        }
+                      });
+                    }}
+                  className="btn btn-primary text-white">
+                  View Booking
+                </a>
+              </div>
+            </div>
+          
+          </div>
+        );
+      });
+    }
 
 
     return (
       <div className="container">
         <div className="row">
-          
-        {redirectVar}
-      {properties}
-
-          
+          {bookings}
         </div>
       </div>
     );
   }
 }
+function mapStateToProps(state) {
+  return {
+    ownerBookings: state.OwnerBookingsReducer,
+    tokenState: state.TokenReducer
+  };
+}
 
-export default withRouter(OwnerBookingsHeader);
+export default withRouter(
+  connect(
+    mapStateToProps,
+    { getOwnerBookings,checkValidity }
+  )(OwnerBookingsHeader)
+);

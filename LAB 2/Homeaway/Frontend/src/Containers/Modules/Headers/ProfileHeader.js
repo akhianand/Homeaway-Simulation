@@ -3,6 +3,7 @@ import "react-dates/initialize";
 import axios from "axios";
 import cookie from 'react-cookies';
 import {withRouter} from 'react-router-dom';
+import { checkValidity } from "../../../Actions/userActions";
 
 
 class ProfileHeader extends Component {

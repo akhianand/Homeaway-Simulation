@@ -29,7 +29,20 @@ const BookingSchema = new Schema({
   cost: {
     type: Number,
     required: true
-  }
+  },
+  city: {
+    type: String,
+    required: true
+  },
+  currency: {
+    type: String,
+    required: true
+  },
+  propertyname: {
+    type: String,
+    required: true
+  }  
+
 
 
 });

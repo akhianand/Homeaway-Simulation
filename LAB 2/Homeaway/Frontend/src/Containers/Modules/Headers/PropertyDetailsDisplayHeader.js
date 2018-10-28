@@ -5,6 +5,8 @@ import "react-dates/initialize";
 import "react-dates/lib/css/_datepicker.css";
 import { withRouter } from "react-router-dom";
 import { getProperty } from "../../../Actions/propertyActions";
+import { checkValidity } from "../../../Actions/userActions";
+
 import { connect } from "react-redux";
 import { v4 } from "node-uuid";
 
@@ -12,8 +14,19 @@ class PropertyDetailsDisplayHeader extends Component {
 
   componentWillMount(){
     this.props.getProperty(this.props.pid);
+      this.props.checkValidity();
+    
   }
   render() {
+
+    if (this.props.isValidTokenState !== undefined) {
+      if (!this.props.isValidTokenState) {
+        this.props.history.push({
+          pathname: "/Login"
+        });
+      }
+    }
+
     let imagesarray=null;
     if(this.props.propertyDisplay.property){
      imagesarray = this.props.propertyDisplay.property.photos.map(image => {
@@ -125,13 +138,13 @@ class PropertyDetailsDisplayHeader extends Component {
 function mapStateToProps(state) {
   return {
     propertyDisplay: state.PropertyDisplay,
-    tokenState: state.TokenReducer
+    isValidTokenState: state.TokenReducer.validity
   };
 }
 
 export default withRouter(
   connect(
     mapStateToProps,
-    { getProperty }
+    { getProperty,checkValidity }
   )(PropertyDetailsDisplayHeader)
 );

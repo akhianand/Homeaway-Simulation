@@ -12,12 +12,8 @@ class OwnerPropertyPanel extends Component {
       <div>
         <br />
         <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
+
+    
         <div className="card">
           <div className="card-body shadow-lg">
             <h5 className="card-title">Booked Property</h5>

@@ -2,11 +2,22 @@ import React, { Component } from "react";
 import "react-dates/initialize";
 import { withRouter } from "react-router-dom";
 import { getAllPropertiesOfUser } from "../../../Actions/propertyActions";
+import { checkValidity } from "../../../Actions/userActions";
+
 import { connect } from "react-redux";
 
 class PropertiesHeader extends Component {
   componentWillMount() {
+    this.props.checkValidity(() => {
+      if (this.props.tokenState.validity) {
+        this.props.history.push({
+          pathname: "/OwnerLogin"
+        });
+      }
+    });
+
     this.props.getAllPropertiesOfUser();
+
   }
 
   render() {
@@ -75,6 +86,6 @@ function mapStateToProps(state) {
 export default withRouter(
   connect(
     mapStateToProps,
-    { getAllPropertiesOfUser }
+    { getAllPropertiesOfUser,checkValidity }
   )(PropertiesHeader)
 );

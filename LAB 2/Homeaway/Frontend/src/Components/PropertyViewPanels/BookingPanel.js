@@ -78,13 +78,21 @@ class PropertyBookingPanel extends Component {
           propertyowneremail: this.props.propertyDisplay.property.email,
           propertyid: this.props.propertyDisplay.property._id,
           nights: this.state.chosenNoDates,
-          cost: this.state.cost
+          cost: this.state.cost,
+          city:this.props.propertyDisplay.property.city,
+          currency:this.props.propertyDisplay.property.currency,
+          propertyname:this.props.propertyDisplay.property.headline
         };
         this.props.createNewBooking(bookingData).then(() => {
+          if(!this.props.bookingState.error){
           console.log("Booking Added Successfully", this.props.bookingState);
+          alert("Booking Added Successfully!");
           this.props.history.push({
             pathname: "/TravelDash"
           });
+        }else{
+
+        }
         });
 
         console.log(bookingData);

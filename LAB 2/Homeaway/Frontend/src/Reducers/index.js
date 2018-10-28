@@ -11,6 +11,9 @@ import ProfileReducer from "./reducer_Profile";
 import TokenReducer from "./reducer_token";
 import TravelMessageReducer from "./reducer_TravelMessage";
 import OwnerMessageReducer from "./reducer_OwnerMessage";
+import TravelerBookingsReducer from "./reducer_travelerBookings";
+import OwnerBookingsReducer from "./reducer_ownerBookings";
+import CurrentBookingReducer from "./reducer_currentBooking";
 
 
 const rootReducer = combineReducers({
@@ -25,6 +28,9 @@ const rootReducer = combineReducers({
   ProfileReducer,
   TravelMessageReducer,
   OwnerMessageReducer,
+  TravelerBookingsReducer,
+  OwnerBookingsReducer,
+  CurrentBookingReducer,
   form: formReducer
 });
 export default rootReducer;

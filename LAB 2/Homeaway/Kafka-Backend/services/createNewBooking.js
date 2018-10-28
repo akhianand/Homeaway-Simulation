@@ -12,7 +12,10 @@ function handle_request(msg, callback) {
     propertyowneremail: msg.propertyowneremail,
     propertyid: msg.propertyid,
     nights: msg.nights,
-    cost: msg.cost
+    cost: msg.cost,
+    currency:msg.currency,
+    city:msg.city,
+    propertyname:msg.propertyname
   })
     .then(book => {
       var newBooking = {

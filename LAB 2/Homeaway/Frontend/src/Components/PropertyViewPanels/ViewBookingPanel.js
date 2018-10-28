@@ -3,74 +3,92 @@ import "react-dates/initialize";
 import moment from "moment";
 import { DateRangePicker } from "react-dates";
 import "react-dates/lib/css/_datepicker.css";
+import { withRouter } from "react-router-dom";
 import { Redirect } from "react-router";
+import { connect } from "react-redux";
+import { getBooking } from "../../Actions/bookingActions";
 
 class PropertyBookedPanel extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      pid: this.props.pid,
-      bid:this.props.bid,
-      startDate:this.props.startDate,
-      endDate:this.props.endDate
+      goTravelDash:false
     };
   }
-
-  gotoTraveldash=()=>{
-    this.setState({
-      traveldashshow:true
-    })
-
-
+  componentWillMount() {
+    this.props.getBooking(this.props.location.state.bid).then(() => {
+      console.log(this.props.currentBooking.booking);
+    });
   }
 
-  render() {
-    var redirectVar=null;
-    if(this.state.traveldashshow){
-      redirectVar = <Redirect to= "/TravelDash"/>
-    }
- 
-    return (
-        <div>
-          {redirectVar}
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-      <div className="card">
-        <div className="card-body shadow-lg">
-          <h5 className="card-title">Booked Property</h5>
-          <small>
-              Here is your booking dates
-          </small>
 
-          <DateRangePicker
-                startDate={moment(new Date(this.state.startDate))}
-                endDate={moment(new Date(this.state.endDate))}
-                readOnly={true}
-                startDateId="your_unique_start_date_id"
-                endDateId="your_unique_end_date_id"
-                onDatesChange={({ startDate, endDate }) =>
-                console.log()
-              }
-              focusedInput={this.state.focusedInput} 
-              onFocusChange={focusedInput =>
-                console.log()
-              }
-              />
-              <br/><br/>
-          <a  onClick={this.gotoTraveldash} className="btn btn-primary text-white">
-                See Other Bookings
-          </a>
+  render() {
+    // let redirectVar = null;
+    if (this.state.goTravelDash) {
+      this.props.history.push({
+        pathname: "/TravelDash"
+      });
+    }
+
+
+
+    return this.props.currentBooking.booking ? (
+      <div>
+        <br />
+        <br />
+
+        <div className="card shadow-lg">
+          <div className="card-body">
+            <h5 className="card-title"> Property Bookings </h5>
+            <small>Booking</small>
+            <DateRangePicker
+              startDate={moment(
+                new Date(this.props.currentBooking.booking.bookingfrom)
+              )}
+              endDate={moment(
+                new Date(this.props.currentBooking.booking.bookingto)
+              )}
+              readOnly={true}
+              startDateId="your_unique_start_date_id"
+              endDateId="your_unique_end_date_id"
+              onDatesChange={({ startDate, endDate }) => console.log()}
+              onFocusChange={focusedInput => console.log()}
+            />
+            <br />
+            <br />
+
+            <h1>
+              {this.props.currentBooking.booking.cost}
+              {this.props.currentBooking.booking.currency}
+            </h1>
+
+            <br />
+  
+     
+            <a
+              onClick={()=>this.setState({
+                goTravelDash:true
+              })}
+              className="btn btn-primary text-white">
+              See Other Bookings
+            </a>
+          </div>
         </div>
       </div>
-      </div>
-    );
+    ) : null;
   }
 }
 
-export default PropertyBookedPanel;
+function mapStateToProps(state) {
+  return {
+    currentBooking: state.CurrentBookingReducer,
+    tokenState: state.TokenReducer
+  };
+}
+
+export default withRouter(
+  connect(
+    mapStateToProps,
+    { getBooking }
+  )(PropertyBookedPanel)
+);

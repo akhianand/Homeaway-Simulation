@@ -6,6 +6,8 @@ import ImagesForm from "../Modules/Headers/OwnerForms/images";
 import AvailabilityForm from "../Modules/Headers/OwnerForms/availability";
 import RatesForm from "../Modules/Headers/OwnerForms/rates";
 import { createNewProperty } from "../../Actions/propertyActions";
+import { checkValidity } from "../../Actions/userActions";
+
 import { connect } from "react-redux";
 import { withRouter } from "react-router";
 
@@ -18,6 +20,10 @@ class OwnerAddPropertyPage extends Component {
     this.state = {
       page: 1
     };
+  }
+
+  componentWillMount(){
+    this.props.checkValidity();
   }
 
   nextPage() {
@@ -37,6 +43,16 @@ class OwnerAddPropertyPage extends Component {
   }
 
   render() {
+
+    if (this.props.isValidTokenState !== undefined) {
+      if (!this.props.isValidTokenState) {
+        this.props.history.push({
+          pathname: "/OwnerLogin"
+        });
+      }
+    }
+
+
     if (this.props.propertyState.propertyadded) {
       alert("Property added sucessfully!");
       this.props.history.push("/OwnerDash");
@@ -156,13 +172,15 @@ class OwnerAddPropertyPage extends Component {
 
 function mapStateToProps(state) {
   return {
-    propertyState: state.AddPropertyReducer
+    propertyState: state.AddPropertyReducer,
+    isValidTokenState: state.TokenReducer.validity
+
   };
 }
 
 export default withRouter(
   connect(
     mapStateToProps,
-    { createNewProperty }
+    { createNewProperty, checkValidity }
   )(OwnerAddPropertyPage)
 );

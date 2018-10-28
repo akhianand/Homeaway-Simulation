@@ -2,12 +2,22 @@ import React, { Component } from "react";
 import "react-dates/initialize";
 import { withRouter } from "react-router-dom";
 import { getMessageTraveller } from "../../../Actions/messagingActions";
+import { checkValidity } from "../../../Actions/userActions";
+
 import { connect } from "react-redux";
-import moment from "moment"
+import moment from "moment";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 class TravelMessageHeader extends Component {
   componentWillMount() {
+    this.props.checkValidity(() => {
+      if (this.props.tokenState.validity) {
+        this.props.history.push({
+          pathname: "/Login"
+        });
+      }
+    });
+
     this.props
       .getMessageTraveller(localStorage.getItem("username"))
       .then(() => {
@@ -16,12 +26,10 @@ class TravelMessageHeader extends Component {
   }
 
   render() {
-    
     let messages = null;
     if (this.props.travelMessages.messages.length !== 0) {
-    
       messages = this.props.travelMessages.messages.map(message => {
-        let time = moment(message.sent).format('MM/DD/YYYY h:mm a');;
+        let time = moment(message.sent).format("MM/DD/YYYY h:mm a");
         return (
           <div key={message._id}>
             <div className="card shadow-lg text-left">
@@ -47,7 +55,11 @@ class TravelMessageHeader extends Component {
         );
       });
     } else {
-      messages = <h3><FontAwesomeIcon icon="envelope" /> No Messages</h3>;
+      messages = (
+        <h3>
+          <FontAwesomeIcon icon="envelope" /> No Messages
+        </h3>
+      );
     }
     return (
       <div className="container">
@@ -71,6 +83,6 @@ function mapStateToProps(state) {
 export default withRouter(
   connect(
     mapStateToProps,
-    { getMessageTraveller }
+    { getMessageTraveller, checkValidity }
   )(TravelMessageHeader)
 );

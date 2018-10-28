@@ -5,6 +5,8 @@ const router = express.Router();
 var kafka = require("./kafka/client");
 const MessageModel = require("../model/messageModel");
 const UserModel = require("../model/usermodel");
+const BookingModel = require("../model/bookingmodel");
+const PropertyModel = require("../model/propertymodel");
 
 var storage = multer.diskStorage({
   destination: function(req, file, callback) {
@@ -225,32 +227,60 @@ router.post("/createNewMessage", (req, res, next) => {
 router.get("/getMessageTraveller", (req, res, next) => {
   let email = req.query.email;
   console.log("email", req.query.email);
-  UserModel.findOne({ email: email }).then(user => {
-    let messageIDs = user.travelmessages;
-    MessageModel.find({
-      _id: { $in: [messageIDs] }
-    }).then(messages => {
-      res.status(200).json({
-        success: true,
-        messages
+  UserModel.findOne({ email: email })
+    .then(user => {
+      let messageIDs = user.travelmessages;
+      MessageModel.find({
+        _id: { $in: [messageIDs] }
+      })
+        .then(messages => {
+          res.status(200).json({
+            success: true,
+            messages
+          });
+        })
+        .catch(err => {
+          res.status(400).json({
+            success: false,
+            err
+          });
+        });
+    })
+    .catch(err => {
+      res.status(400).json({
+        success: false,
+        err
       });
     });
-  });
 });
 
 router.get("/getMessageOwner", (req, res, next) => {
   let email = req.query.email;
-  UserModel.findOne({ email: email }).then(user => {
-    let messageIDs = user.ownermessages;
-    MessageModel.find({
-      _id: { $in: [messageIDs] }
-    }).then(messages => {
-      res.status(200).json({
-        success: true,
-        messages
+  UserModel.findOne({ email: email })
+    .then(user => {
+      let messageIDs = user.ownermessages;
+      MessageModel.find({
+        _id: { $in: [messageIDs] }
+      })
+        .then(messages => {
+          res.status(200).json({
+            success: true,
+            messages
+          });
+        })
+        .catch(err => {
+          res.status(400).json({
+            success: false,
+            err
+          });
+        });
+    })
+    .catch(err => {
+      res.status(400).json({
+        success: false,
+        err
       });
     });
-  });
 });
 
 router.post("/setOwnerReply", (req, res, next) => {
@@ -275,5 +305,66 @@ router.post("/setOwnerReply", (req, res, next) => {
       });
     });
 });
+
+router.get("/getTravellerBookings", (req, res, next) => {
+  let email = req.query.email;
+  BookingModel.find({ travelleremail: email })
+    .then(bookings => {
+
+
+  
+
+      res.status(200).json({
+        success: true,
+        bookings
+      });
+    })
+    .catch(err => {
+      res.status(400).json({
+        success: false,
+        err
+      });
+    });
+});
+
+
+router.get("/getOwnerBookings", (req, res, next) => {
+  let email = req.query.email;
+  BookingModel.find({ propertyowneremail: email })
+    .then(bookings => {
+      res.status(200).json({
+        success: true,
+        bookings
+      });
+    })
+    .catch(err => {
+      res.status(400).json({
+        success: false,
+        err
+      });
+    });
+});
+
+
+
+
+router.get("/getBooking", (req, res, next) => {
+  let bid = req.query.bid;
+  BookingModel.findOne({ _id: bid })
+    .then(booking => {
+      res.status(200).json({
+        success: true,
+        booking
+      });
+    })
+    .catch(err => {
+      res.status(400).json({
+        success: false,
+        err
+      });
+    });
+});
+
+
 
 module.exports = router;
