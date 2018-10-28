@@ -55,6 +55,7 @@ app.use(
 require("./auth/auth");
 const routes = require("./api/routes");
 const secureRoute = require("./api/secure-routes");
+
 app.use("/", routes);
 app.use("/user", passport.authenticate("jwt", { session: false }), secureRoute);
 

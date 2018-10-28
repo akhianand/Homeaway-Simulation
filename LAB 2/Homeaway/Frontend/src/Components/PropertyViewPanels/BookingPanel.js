@@ -6,6 +6,8 @@ import { withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { checkValidity } from "../../Actions/userActions";
+import { createNewMessage } from "../../Actions/messagingActions";
+
 import { createNewBooking } from "../../Actions/bookingActions";
 import moment from "moment";
 
@@ -18,13 +20,48 @@ class PropertyBookingPanel extends Component {
       startDate: null,
       endDate: null,
       error: false,
-      errorMessage: ""
+      errorMessage: "",
+      message: "",
+      subject: ""
     };
   }
 
   componentWillMount() {
     this.props.checkValidity();
   }
+
+  messageChangeHandler = e => {
+    this.setState({
+      message: e.target.value
+    });
+  };
+
+  subjectChangeHandler = e => {
+    this.setState({
+      subject: e.target.value
+    });
+  };
+
+  sendMessage = () => {
+    if (this.state.message === "" || this.state.subject === "") {
+      alert("Fileds Can't be left Empty");
+    } else {
+      var data = {
+        message: this.state.message,
+        subject: this.state.subject,
+        sender: localStorage.getItem("username"),
+        reciever: this.props.propertyDisplay.property.email,
+        sent: Date.now()
+      };
+      this.props.createNewMessage(data).then(() => {
+        alert("Message Sent Successfully!");
+        this.setState({
+          subject: "",
+          message:""
+        });
+      });
+    }
+  };
 
   bookProperty = () => {
     if (this.state.startDate === null || this.state.endDate === null) {
@@ -45,9 +82,9 @@ class PropertyBookingPanel extends Component {
         };
         this.props.createNewBooking(bookingData).then(() => {
           console.log("Booking Added Successfully", this.props.bookingState);
-          // this.props.history.push({
-          //   pathname: "/TravelDash"
-          // });
+          this.props.history.push({
+            pathname: "/TravelDash"
+          });
         });
 
         console.log(bookingData);
@@ -106,7 +143,6 @@ class PropertyBookingPanel extends Component {
     const dateFormat = "YYYY-MM-DD";
     let blockedDates = [];
     let selectedDates = [];
-
     if (this.props.propertyDisplay.property) {
       if (this.props.propertyDisplay.property.bookings) {
         this.props.propertyDisplay.property.bookings.forEach(booking => {
@@ -239,11 +275,12 @@ class PropertyBookingPanel extends Component {
               <div className="container" style={{ padding: "5%" }}>
                 <form>
                   <div className="form-group">
-                    <label htmlFor="Subject">Email address</label>
+                    <label htmlFor="Subject">Subject</label>
                     <input
                       type="text"
                       className="form-control"
-                      id="Subject"
+                      value={this.state.subject}
+                      onChange={this.subjectChangeHandler}
                       placeholder="Enter Subject"
                     />
                   </div>
@@ -252,12 +289,17 @@ class PropertyBookingPanel extends Component {
                     <textarea
                       className="form-control"
                       rows="8"
-                      id="message"
+                      value={this.state.message}
+                      onChange={this.messageChangeHandler}
                       placeholder="Type What you want to ask the Owner"
                     />
                   </div>
 
-                  <button type="submit" className="btn btn-primary">
+                  <button
+                    type="button"
+                    data-dismiss="modal"
+                    onClick={this.sendMessage}
+                    className="btn btn-primary">
                     Send
                   </button>
                 </form>
@@ -284,6 +326,6 @@ function mapStateToProps(state) {
 export default withRouter(
   connect(
     mapStateToProps,
-    { checkValidity, createNewBooking }
+    { checkValidity, createNewBooking, createNewMessage }
   )(PropertyBookingPanel)
 );

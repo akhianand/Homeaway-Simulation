@@ -7,6 +7,7 @@ import InternalNavTraveller from "../Modules/Navbar/InternalNavTraveller";
 import { connect } from "react-redux";
 import { checkValidity } from "../../Actions/userActions";
 import { withRouter } from "react-router-dom";
+import TravelMessageHeader from "../Modules/Headers/TravellerMessagingHeader";
 
 class TravelDashboardPage extends Component {
   componentWillMount() {
@@ -22,8 +23,10 @@ class TravelDashboardPage extends Component {
       }
     }
     let redirectVar = null;
-    let tabOne = <BookingsHeader />;
-    let tabTwo = <ProfileHeader />;
+    let tabOne = <TravelMessageHeader />;
+    let tabTwo = <BookingsHeader />;
+    let tabThree = <ProfileHeader />;
+
     return (
       <div>
         {redirectVar}
@@ -31,8 +34,10 @@ class TravelDashboardPage extends Component {
         <Tabs
           oneTab={tabOne}
           twoTab={tabTwo}
-          oneTabName={"My Trips"}
-          twoTabName={"Profile"}
+          threeTab={tabThree}
+          oneTabName={"Messages"}
+          twoTabName={"Bookings"}
+          threeTabName={"Profile"}
         />
       </div>
     );

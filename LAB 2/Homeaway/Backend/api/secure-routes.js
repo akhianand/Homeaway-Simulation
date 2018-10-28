@@ -3,6 +3,8 @@ var multer = require("multer");
 var mkdirp = require("mkdirp");
 const router = express.Router();
 var kafka = require("./kafka/client");
+const MessageModel = require("../model/messageModel");
+const UserModel = require("../model/usermodel");
 
 var storage = multer.diskStorage({
   destination: function(req, file, callback) {
@@ -22,28 +24,28 @@ router.post("/createNewProperty", upload.array("photos"), (req, res, next) => {
     filenamearray.push(file.filename);
   });
   const photos = filenamearray;
-  let data ={
-    addressline1:req.body.addressline1,
-    addressline2:req.body.addressline2,
-    city:req.body.city,
-    state:req.body.state,
-    zip:req.body.zip,
-    country:req.body.country,
-    phone:req.body.phone,
-    headline:req.body.headline,
-    description:req.body.description,
-    placetype:req.body.placetype,
-    bedrooms:req.body.bedrooms,
-    bathrooms:req.body.bathrooms,
-    accomodates:req.body.accomodates,
-    currency:req.body.currency,
-    baserent:req.body.nightlybaserent,
-    minimumstay:req.body.minimumstay,
-    availablefrom:req.body.startDate,
-    availableto:req.body.endDate,
+  let data = {
+    addressline1: req.body.addressline1,
+    addressline2: req.body.addressline2,
+    city: req.body.city,
+    state: req.body.state,
+    zip: req.body.zip,
+    country: req.body.country,
+    phone: req.body.phone,
+    headline: req.body.headline,
+    description: req.body.description,
+    placetype: req.body.placetype,
+    bedrooms: req.body.bedrooms,
+    bathrooms: req.body.bathrooms,
+    accomodates: req.body.accomodates,
+    currency: req.body.currency,
+    baserent: req.body.nightlybaserent,
+    minimumstay: req.body.minimumstay,
+    availablefrom: req.body.startDate,
+    availableto: req.body.endDate,
     photos,
-    email:req.body.email
-  }
+    email: req.body.email
+  };
   console.log("Making Request To Kafka...");
   kafka.make_request("create_new_property", data, function(err, results) {
     console.log("<<Kafka Response Recieved>>");
@@ -61,7 +63,6 @@ router.post("/createNewProperty", upload.array("photos"), (req, res, next) => {
       });
     }
   });
-
 });
 
 router.get("/getAllPropertiesOfUser", (req, res, next) => {
@@ -159,6 +160,120 @@ router.post("/createNewBooking", (req, res, next) => {
       });
     }
   });
+});
+
+router.post("/createNewMessage", (req, res, next) => {
+  let message = req.body.message;
+  let subject = req.body.subject;
+  let sender = req.body.sender;
+  let reciever = req.body.reciever;
+  let sent = req.body.sent;
+
+  const m = MessageModel.create({
+    message,
+    subject,
+    sender,
+    reciever,
+    sent
+  })
+    .then(newMessage => {
+      UserModel.findOneAndUpdate(
+        { email: sender },
+        {
+          $push: {
+            travelmessages: newMessage._id
+          }
+        }
+      )
+        .then(() => {
+          UserModel.findOneAndUpdate(
+            { email: reciever },
+            {
+              $push: {
+                ownermessages: newMessage._id
+              }
+            }
+          )
+            .then(() => {
+              res.status(200).json({
+                success: true,
+                message: "Message Added Successfully"
+              });
+            })
+            .catch(() => {
+              res.status(400).json({
+                success: false,
+                message: "Error While Adding Owner Messages"
+              });
+            });
+        })
+        .catch(() => {
+          res.status(400).json({
+            success: false,
+            message: "Error While Adding Travel Messages"
+          });
+        });
+    })
+    .catch(err => {
+      res.status(400).json({
+        success: false,
+        message: "Error While Messages"
+      });
+    });
+});
+
+router.get("/getMessageTraveller", (req, res, next) => {
+  let email = req.query.email;
+  console.log("email", req.query.email);
+  UserModel.findOne({ email: email }).then(user => {
+    let messageIDs = user.travelmessages;
+    MessageModel.find({
+      _id: { $in: [messageIDs] }
+    }).then(messages => {
+      res.status(200).json({
+        success: true,
+        messages
+      });
+    });
+  });
+});
+
+router.get("/getMessageOwner", (req, res, next) => {
+  let email = req.query.email;
+  UserModel.findOne({ email: email }).then(user => {
+    let messageIDs = user.ownermessages;
+    MessageModel.find({
+      _id: { $in: [messageIDs] }
+    }).then(messages => {
+      res.status(200).json({
+        success: true,
+        messages
+      });
+    });
+  });
+});
+
+router.post("/setOwnerReply", (req, res, next) => {
+  let mid = req.body.mid;
+  let reply = req.body.reply;
+  MessageModel.findOneAndUpdate(
+    { _id: mid },
+    {
+      reply: reply
+    }
+  )
+    .then(message => {
+      res.status(200).json({
+        success: true,
+        message
+      });
+    })
+    .catch(err => {
+      res.status(400).json({
+        success: false,
+        err
+      });
+    });
 });
 
 module.exports = router;

@@ -9,6 +9,9 @@ import SignUpReducer from "./reducer_signUp";
 import BookingReducer from "./reducer_booking";
 import ProfileReducer from "./reducer_Profile";
 import TokenReducer from "./reducer_token";
+import TravelMessageReducer from "./reducer_TravelMessage";
+import OwnerMessageReducer from "./reducer_OwnerMessage";
+
 
 const rootReducer = combineReducers({
   LoginReducer,
@@ -20,6 +23,8 @@ const rootReducer = combineReducers({
   SignUpReducer,
   BookingReducer,
   ProfileReducer,
+  TravelMessageReducer,
+  OwnerMessageReducer,
   form: formReducer
 });
 export default rootReducer;

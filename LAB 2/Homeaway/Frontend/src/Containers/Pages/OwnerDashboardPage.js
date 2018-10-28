@@ -4,21 +4,25 @@ import Tabs from "../../Components/TabList";
 import InternalNavOwner from "../Modules/Navbar/InternalNavOwner";
 import PropertiesHeader from "../Modules/Headers/PropertiesHeader";
 import OwnerBookingsHeader from "../Modules/Headers/OwnerBookingsHeader";
-
+import OwnerMessagingHeader from "../Modules/Headers/OwnerMessagingHeader";
 
 class OwnerDashboardPage extends Component {
   render() {
-    let tabOne = <PropertiesHeader />;
-    let tabTwo = <OwnerBookingsHeader />;
+    let tabOne = <OwnerMessagingHeader />;
+    let tabTwo = <PropertiesHeader />;
+    let tabThree = <OwnerBookingsHeader />;
 
     return (
       <div>
-        <InternalNavOwner/>
+        <InternalNavOwner />
+
         <Tabs
           oneTab={tabOne}
           twoTab={tabTwo}
-          oneTabName={"Properties"}
-          twoTabName={"Bookings"}
+          threeTab={tabThree}
+          oneTabName={"Messages"}
+          twoTabName={"Properties"}
+          threeTabName={"Bookings"}
         />
       </div>
     );

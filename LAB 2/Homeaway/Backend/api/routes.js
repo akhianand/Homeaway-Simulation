@@ -5,6 +5,7 @@ const router = express.Router();
 var kafka = require('./kafka/client');
 
 const UserModel = require("../model/usermodel");
+const MessageModel = require("../model/messageModel");
 
 router.post("/signup", async (req, res, next) => {
   passport.authenticate("signup", { session: false }, (err, user, info) => {
@@ -86,8 +87,6 @@ router.get("/uploads/:email/:photo", function(req, res, next) {
     }
   });
 });
-
-
 
 
 
