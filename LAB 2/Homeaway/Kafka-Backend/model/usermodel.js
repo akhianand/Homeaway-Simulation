@@ -47,6 +47,14 @@ const UserSchema = new Schema({
   phone: {
     type: String,
     required: false
+  },
+  ownermessages:{
+    type:[String],
+    required:false
+  },
+  travelmessages:{
+    type:[String],
+    required:false
   }
 
   

@@ -14,6 +14,7 @@ import OwnerMessageReducer from "./reducer_OwnerMessage";
 import TravelerBookingsReducer from "./reducer_travelerBookings";
 import OwnerBookingsReducer from "./reducer_ownerBookings";
 import CurrentBookingReducer from "./reducer_currentBooking";
+import SearchParamsReducer from "./reducer_searchParams";
 
 
 const rootReducer = combineReducers({
@@ -31,6 +32,7 @@ const rootReducer = combineReducers({
   TravelerBookingsReducer,
   OwnerBookingsReducer,
   CurrentBookingReducer,
+  SearchParamsReducer,
   form: formReducer
 });
 export default rootReducer;

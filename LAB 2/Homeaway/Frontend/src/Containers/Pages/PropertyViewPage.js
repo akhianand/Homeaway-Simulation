@@ -56,7 +56,7 @@ class PropertyViewPage extends Component {
 
 function mapStateToProps(state) {
   return {
-    tokenState: state.TokenReducer
+    isValidTokenState: state.TokenReducer.validity
   };
 }
 

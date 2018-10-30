@@ -107,10 +107,10 @@ export function getProperty(id) {
   };
 }
 export function searchParams(data) {
-  return {
-    type: SEARCH_PARAMS,
-    payload: data
-  };
+        return{
+          type: SEARCH_PARAMS,
+          payload: data
+        };
 }
 
 export function getPropertiesWhere(data) {

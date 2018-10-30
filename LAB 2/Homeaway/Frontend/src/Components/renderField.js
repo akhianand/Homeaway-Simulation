@@ -79,4 +79,44 @@ export const renderFieldMedium = ({ input, label, maxLength, type, meta: { touch
       {touched && error && <span className="text-danger">{error}</span>}
     </div>
   </div>
+
+
+
+
+);
+
+export const renderFieldMediumForProfile = ({ input, placeholder, maxLength, type, meta: { touched, error } }) => (
+  <div>
+        <label>{placeholder}</label>
+
+    <div>
+      <input
+        {...input}
+        placeholder={placeholder}
+        type={type}
+        className="form-control form-control-md"
+        maxLength={maxLength}
+      />
+      {touched && error && <span className="text-danger">{error}</span>}
+    </div>
+  </div>
+
+
+
+);export const renderTextAreaForProfile = ({ input,rows, maxLength , placeholder, maxlength, type, meta: { touched, error } }) => (
+  <div>
+        <label>{placeholder}</label>
+
+    <div>
+      <textarea
+        {...input}
+        placeholder={placeholder}
+        type={type}
+        className="form-control form-control-md "
+        maxLength={maxLength}
+        rows={rows}
+      />{" "}
+      {touched && error && <span className="text-danger">{error}</span>}
+    </div>
+  </div>
 );

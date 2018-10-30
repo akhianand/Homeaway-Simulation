@@ -10,7 +10,6 @@ export const ADDING_ERROR = "add_error";
 export const PROFILE_FETCHED = "profile_user";
 export const PROFILE_ERROR = "profile_error";
 
-
 const ROOT_URL = "http://localhost:8000";
 
 export function login(data) {
@@ -21,13 +20,12 @@ export function login(data) {
         type: AUTHENTICATED,
         payload: "User Logged in Sucessfully"
       });
-      var base64Url = res.data.token.split('.')[1];
-      var base64 = base64Url.replace('-', '+').replace('_', '/');
-      var tok= JSON.parse(window.atob(base64));
+      var base64Url = res.data.token.split(".")[1];
+      var base64 = base64Url.replace("-", "+").replace("_", "/");
+      var tok = JSON.parse(window.atob(base64));
       localStorage.setItem("user", res.data.token);
       localStorage.setItem("token_expiry", tok.exp);
       localStorage.setItem("username", tok.user.email);
-
     } catch (error) {
       dispatch({
         type: AUTHENTICATION_ERROR,
@@ -38,87 +36,146 @@ export function login(data) {
 }
 
 export function checkValidity() {
-
-  let expstamp= localStorage.getItem("token_expiry");
-  let currentStamp = Math.floor(Date.now()/1000);
-if(expstamp===null){
-return {
-  type: TOKEN_NOEXIST,
-  payload: "Token Does not Exist"
-}
-}else{
-  if(expstamp>currentStamp){
-    var base64Url = localStorage.getItem("user").split('.')[1];
-    var base64 = base64Url.replace('-', '+').replace('_', '/');
-    var tok= JSON.parse(window.atob(base64));
+  let expstamp = localStorage.getItem("token_expiry");
+  let currentStamp = Math.floor(Date.now() / 1000);
+  if (expstamp === null) {
     return {
-      type: TOKEN_VALID,
-      payload: tok
+      type: TOKEN_NOEXIST,
+      payload: "Token Does not Exist"
+    };
+  } else {
+    if (expstamp > currentStamp) {
+      var base64Url = localStorage.getItem("user").split(".")[1];
+      var base64 = base64Url.replace("-", "+").replace("_", "/");
+      var tok = JSON.parse(window.atob(base64));
+      return {
+        type: TOKEN_VALID,
+        payload: tok
+      };
+    } else {
+      localStorage.removeItem("user");
+      localStorage.removeItem("token_expiry");
+      return {
+        type: TOKEN_INVALID,
+        payload: "Token has Expired"
+      };
     }
-  }else{
-    localStorage.removeItem("user");
-    localStorage.removeItem("token_expiry");
-    return {
-      type: TOKEN_INVALID,
-      payload: "Token has Expired"
-    }  }
+  }
 }
-  
-}
-
-
 
 export function signUp(data) {
   return async dispatch => {
-      await axios.post(`${ROOT_URL}/signup`, data).then((response)=>{
+    axios.defaults.withCredentials = true;
+    axios.defaults.headers.common["Authorization"] =
+      "JWT " + localStorage.getItem("user");
+    await axios
+      .post(`${ROOT_URL}/signup`, data)
+      .then(response => {
         if (response.status === 200) {
-        dispatch({
-          type: ADDED,
-          payload: "User Signed Up Sucessfully"
-        });
-      }else{
-        dispatch({
-          type: ADDING_ERROR,
-          payload: "An Error Occoured"
-        });
-      }
-      }).catch((err)=>{
+          dispatch({
+            type: ADDED,
+            payload: "User Signed Up Sucessfully"
+          });
+        } else {
+          dispatch({
+            type: ADDING_ERROR,
+            payload: "An Error Occoured"
+          });
+        }
+      })
+      .catch(err => {
         console.log(err);
         dispatch({
           type: ADDING_ERROR,
           payload: "An Error Occoured"
         });
       });
-     
-  
   };
 }
 
+// export function getUserInformation(email) {
+//   return async dispatch => {
+//     axios.defaults.withCredentials = true;
+//     axios.defaults.headers.common["Authorization"] =
+//       "JWT " + localStorage.getItem("user");
+//     await axios
+//       .get(`${ROOT_URL}/getUserInformation`, {
+//         params: {
+//           email: email
+//         }
+//       })
+//       .then(response => {
+//         if (response.status === 200) {
+//           dispatch({
+//             type: PROFILE_FETCHED,
+//             payload: response.data
+//           });
+//         } else {
+//           dispatch({
+//             type: PROFILE_ERROR,
+//             payload: "An Error Occoured"
+//           });
+//         }
+//       })
+//       .catch(err => {
+//         console.log(err);
+//         dispatch({
+//           type: PROFILE_ERROR,
+//           payload: "An Error Occoured"
+//         });
+//       });
+//   };
+// }
 
-export function fetchUserData(email) {
+export function setUserInformation(data) {
   return async dispatch => {
-      await axios.post(`${ROOT_URL}/getUserProfile`, email).then((response)=>{
-        if (response.status === 200) {
+    try {
+      axios.defaults.withCredentials = true;
+      axios.defaults.headers.common["Authorization"] =
+        "JWT " + localStorage.getItem("user");
+      var response = await axios.post(
+        `${ROOT_URL}/user/setUserInformation`,
+        data
+      );
+      if (response.status === 200) {
         dispatch({
           type: PROFILE_FETCHED,
-          payload: response.data
-        });
-      }else{
-        dispatch({
-          type: PROFILE_ERROR,
-          payload: "An Error Occoured"
+          payload: response.data.user
         });
       }
-      }).catch((err)=>{
-        console.log(err);
-        dispatch({
-          type: PROFILE_ERROR,
-          payload: "An Error Occoured"
-        });
+    } catch (error) {
+      dispatch({
+        type: PROFILE_ERROR,
+        payload: "An Error Occoured"
       });
-     
-  
+    }
   };
 }
 
-
+export function getUserInformation() {
+  let email = localStorage.getItem("username");
+  console.log(email);
+  return async dispatch => {
+    try {
+      axios.defaults.withCredentials = true;
+      axios.defaults.headers.common["Authorization"] =
+        "JWT " + localStorage.getItem("user");
+      var response = await axios.get(`${ROOT_URL}/user/getUserInformation`, {
+        params: {
+          email: email
+        }
+      });
+      if (response.status === 200) {
+        dispatch({
+          type: PROFILE_FETCHED,
+          payload: response.data.user
+        });
+      }
+    } catch (error) {
+      dispatch({
+        type: PROFILE_ERROR,
+        payload: "An Error Occoured"
+      });
+    }
+  };
+}

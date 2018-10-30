@@ -24,14 +24,7 @@ class OwnerBookingsHeader extends Component {
 
 
   componentWillMount(){
-    this.props.checkValidity(() => {
-      if (this.props.tokenState.validity) {
-        this.props.history.push({
-          pathname: "/OwnerLogin"
-        });
-      }
-    });
-
+    this.props.checkValidity();
   }
   componentDidMount() {
     this.props.getOwnerBookings(localStorage.getItem("username")).then(()=>{

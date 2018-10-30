@@ -20,13 +20,7 @@ class BookingsHeader extends Component {
   }
 
   componentWillMount(){
-    this.props.checkValidity(() => {
-      if (this.props.tokenState.validity) {
-        this.props.history.push({
-          pathname: "/Login"
-        });
-      }
-    });
+    this.props.checkValidity();
 
   }
 

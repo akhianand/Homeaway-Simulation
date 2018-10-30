@@ -165,205 +165,231 @@ router.post("/createNewBooking", (req, res, next) => {
 });
 
 router.post("/createNewMessage", (req, res, next) => {
-  let message = req.body.message;
-  let subject = req.body.subject;
-  let sender = req.body.sender;
-  let reciever = req.body.reciever;
-  let sent = req.body.sent;
-
-  const m = MessageModel.create({
-    message,
-    subject,
-    sender,
-    reciever,
-    sent
-  })
-    .then(newMessage => {
-      UserModel.findOneAndUpdate(
-        { email: sender },
-        {
-          $push: {
-            travelmessages: newMessage._id
-          }
-        }
-      )
-        .then(() => {
-          UserModel.findOneAndUpdate(
-            { email: reciever },
-            {
-              $push: {
-                ownermessages: newMessage._id
-              }
-            }
-          )
-            .then(() => {
-              res.status(200).json({
-                success: true,
-                message: "Message Added Successfully"
-              });
-            })
-            .catch(() => {
-              res.status(400).json({
-                success: false,
-                message: "Error While Adding Owner Messages"
-              });
-            });
-        })
-        .catch(() => {
-          res.status(400).json({
-            success: false,
-            message: "Error While Adding Travel Messages"
-          });
-        });
-    })
-    .catch(err => {
+  console.log("Inside API Request: /createNewMessage");
+  console.log("Making Request To Kafka...");
+  kafka.make_request("create_new_message", req.body, function(err, results) {
+    console.log("<<Kafka Response Recieved>>");
+    if (err) {
+      console.log("Fetch Error");
       res.status(400).json({
         success: false,
-        message: "Error While Messages"
+        err
       });
-    });
+    } else {
+      console.log("Fetch Successfull");
+      res.status(200).json({
+        success: true,
+        message: "Message added Successfully"
+      });
+    }
+  });
 });
 
 router.get("/getMessageTraveller", (req, res, next) => {
-  let email = req.query.email;
-  console.log("email", req.query.email);
-  UserModel.findOne({ email: email })
-    .then(user => {
-      let messageIDs = user.travelmessages;
-      MessageModel.find({
-        _id: { $in: [messageIDs] }
-      })
-        .then(messages => {
-          res.status(200).json({
-            success: true,
-            messages
-          });
-        })
-        .catch(err => {
-          res.status(400).json({
-            success: false,
-            err
-          });
-        });
-    })
-    .catch(err => {
+  var body = {
+    email: req.query.email
+  };
+  console.log("Inside API Request: /getMessageTraveller");
+  console.log("Making Request To Kafka...");
+  kafka.make_request("get_message_traveller", body, function(err, results) {
+    console.log("<<Kafka Response Recieved>>");
+    if (err) {
+      console.log("Fetch Error");
       res.status(400).json({
         success: false,
         err
       });
-    });
+    } else {
+      console.log("Fetch Successfull", results);
+      res.status(200).json({
+        success: true,
+        messages: results
+      });
+    }
+  });
 });
 
 router.get("/getMessageOwner", (req, res, next) => {
-  let email = req.query.email;
-  UserModel.findOne({ email: email })
-    .then(user => {
-      let messageIDs = user.ownermessages;
-      MessageModel.find({
-        _id: { $in: [messageIDs] }
-      })
-        .then(messages => {
-          res.status(200).json({
-            success: true,
-            messages
-          });
-        })
-        .catch(err => {
-          res.status(400).json({
-            success: false,
-            err
-          });
-        });
-    })
-    .catch(err => {
+  var body = {
+    email: req.query.email
+  };
+
+  console.log("Inside API Request: /getMessageOwner");
+  console.log("Making Request To Kafka...");
+  kafka.make_request("get_message_owner", body, function(err, results) {
+    console.log("<<Kafka Response Recieved>>");
+    if (err) {
+      console.log("Fetch Error");
       res.status(400).json({
         success: false,
         err
       });
-    });
+    } else {
+      console.log("Fetch Successfull");
+      res.status(200).json({
+        success: true,
+        messages: results
+        
+      });
+    }
+  });
+
 });
 
 router.post("/setOwnerReply", (req, res, next) => {
-  let mid = req.body.mid;
-  let reply = req.body.reply;
-  MessageModel.findOneAndUpdate(
-    { _id: mid },
-    {
-      reply: reply
-    }
-  )
-    .then(message => {
-      res.status(200).json({
-        success: true,
-        message
-      });
-    })
-    .catch(err => {
+  console.log("Inside API Request: /setOwnerReply");
+  console.log("Making Request To Kafka...");
+  kafka.make_request("set_owner_reply", req.body, function(err, results) {
+    console.log("<<Kafka Response Recieved>>");
+    if (err) {
+      console.log("Fetch Error");
       res.status(400).json({
         success: false,
         err
       });
-    });
+    } else {
+      console.log("Fetch Successfull");
+      res.status(200).json({
+        success: true,
+        message: results
+        
+      });
+    }
+  });
+
 });
 
 router.get("/getTravellerBookings", (req, res, next) => {
-  let email = req.query.email;
-  BookingModel.find({ travelleremail: email })
-    .then(bookings => {
-
-
-  
-
-      res.status(200).json({
-        success: true,
-        bookings
-      });
-    })
-    .catch(err => {
+  var body = {
+    email: req.query.email
+  };
+  console.log("Inside API Request: /getTravellerBookings");
+  console.log("Making Request To Kafka...");
+  kafka.make_request("get_traveller_bookings", body, function(err, results) {
+    console.log("<<Kafka Response Recieved>>");
+    if (err) {
+      console.log("Fetch Error");
       res.status(400).json({
         success: false,
         err
       });
-    });
+    } else {
+      console.log("Fetch Successfull");
+      res.status(200).json({
+        success: true,
+        bookings: results
+        
+      });
+    }
+  });
 });
 
 
 router.get("/getOwnerBookings", (req, res, next) => {
-  let email = req.query.email;
-  BookingModel.find({ propertyowneremail: email })
-    .then(bookings => {
-      res.status(200).json({
-        success: true,
-        bookings
-      });
-    })
-    .catch(err => {
+  var body = {
+    email: req.query.email
+  };
+  console.log("Inside API Request: /getOwnerBookings");
+  console.log("Making Request To Kafka...");
+  kafka.make_request("get_owner_bookings", body, function(err, results) {
+    console.log("<<Kafka Response Recieved>>");
+    if (err) {
+      console.log("Fetch Error");
       res.status(400).json({
         success: false,
         err
       });
-    });
+    } else {
+      console.log("Fetch Successfull");
+      res.status(200).json({
+        success: true,
+        bookings: results
+        
+      });
+    }
+  });
 });
 
 
 
 
 router.get("/getBooking", (req, res, next) => {
-  let bid = req.query.bid;
-  BookingModel.findOne({ _id: bid })
-    .then(booking => {
-      res.status(200).json({
-        success: true,
-        booking
-      });
-    })
-    .catch(err => {
+  var body = {
+    bid: req.query.bid
+  };
+  console.log("Inside API Request: /getBooking");
+  console.log("Making Request To Kafka...");
+  kafka.make_request("get_booking", body, function(err, results) {
+    console.log("<<Kafka Response Recieved>>");
+    if (err) {
+      console.log("Fetch Error");
       res.status(400).json({
         success: false,
         err
       });
-    });
+    } else {
+      console.log("Fetch Successfull");
+      res.status(200).json({
+        success: true,
+        booking: results
+        
+      });
+    }
+  });
 });
+
+
+
+router.get("/getUserInformation", (req, res, next) => {
+  var body = {
+    email: req.query.email
+  };
+  console.log("Inside API Request: /getUserInformation");
+  console.log("Making Request To Kafka...");
+  kafka.make_request("get_user_information", body, function(err, results) {
+    console.log("<<Kafka Response Recieved>>");
+    if (err) {
+      console.log("Fetch Error");
+      res.status(400).json({
+        success: false,
+        err
+      });
+    } else {
+      console.log("Fetch Successfull");
+      res.status(200).json({
+        success: true,
+        user: results
+        
+      });
+    }
+  });
+});
+
+
+
+
+router.post("/setUserInformation", (req, res, next) => {
+  console.log("Inside API Request: /setUserInformation");
+  console.log("Making Request To Kafka...");
+  kafka.make_request("set_user_information", req.body, function(err, results) {
+    console.log("<<Kafka Response Recieved>>");
+    if (err) {
+      console.log("Fetch Error");
+      res.status(400).json({
+        success: false,
+        err
+      });
+    } else {
+      console.log("Fetch Successfull");
+      res.status(200).json({
+        success: true,
+        user: results
+        
+      });
+    }
+  });
+});
+
 
 
 

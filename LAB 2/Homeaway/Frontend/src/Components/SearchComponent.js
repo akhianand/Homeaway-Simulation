@@ -109,16 +109,12 @@ class SearchPropertyForm extends Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    searchProperty: state.SearchPropertyReducer
-  };
-}
-
 SearchPropertyForm = reduxForm({
   form: "searchPropertyForm",
   enableReinitialize: true,
-  keepDirtyOnReinitialize:true
+  keepDirtyOnReinitialize: true
 })(SearchPropertyForm);
 
-export default connect(mapStateToProps)(SearchPropertyForm);
+export default connect(state => ({
+  initialValues: state.SearchParamsReducer.data 
+}))(SearchPropertyForm);

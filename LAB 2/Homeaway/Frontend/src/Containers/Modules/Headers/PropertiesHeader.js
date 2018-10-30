@@ -8,16 +8,8 @@ import { connect } from "react-redux";
 
 class PropertiesHeader extends Component {
   componentWillMount() {
-    this.props.checkValidity(() => {
-      if (this.props.tokenState.validity) {
-        this.props.history.push({
-          pathname: "/OwnerLogin"
-        });
-      }
-    });
-
+    this.props.checkValidity();
     this.props.getAllPropertiesOfUser();
-
   }
 
   render() {

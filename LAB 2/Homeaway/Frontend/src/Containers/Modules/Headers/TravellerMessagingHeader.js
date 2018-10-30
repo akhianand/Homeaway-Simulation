@@ -10,14 +10,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 class TravelMessageHeader extends Component {
   componentWillMount() {
-    this.props.checkValidity(() => {
-      if (this.props.tokenState.validity) {
-        this.props.history.push({
-          pathname: "/Login"
-        });
-      }
-    });
-
+    this.props.checkValidity();
     this.props
       .getMessageTraveller(localStorage.getItem("username"))
       .then(() => {

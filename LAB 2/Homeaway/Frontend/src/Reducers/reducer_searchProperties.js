@@ -2,7 +2,6 @@ import {
   SEARCH_PROPERTIES,
   SEARCH_PROPERTY_FETCH_ERROR,
   SEARCH_BLANK,
-  SEARCH_PARAMS
 } from "../Actions/propertyActions";
 
 
@@ -21,11 +20,7 @@ export default function(
       return { ...state, properties: [],error: true, errorMessage: action.payload };
     case SEARCH_BLANK:
       return { ...state, properties: [], error: true, errorMessage: action.payload };
-    case SEARCH_PARAMS:
-      return {
-        ...state,
-        data:action.payload
-      };
+
     default:
       return state ;
   }

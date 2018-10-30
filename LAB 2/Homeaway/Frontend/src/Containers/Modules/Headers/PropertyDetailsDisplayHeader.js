@@ -19,13 +19,7 @@ class PropertyDetailsDisplayHeader extends Component {
   }
   render() {
 
-    if (this.props.isValidTokenState !== undefined) {
-      if (!this.props.isValidTokenState) {
-        this.props.history.push({
-          pathname: "/Login"
-        });
-      }
-    }
+
 
     let imagesarray=null;
     if(this.props.propertyDisplay.property){

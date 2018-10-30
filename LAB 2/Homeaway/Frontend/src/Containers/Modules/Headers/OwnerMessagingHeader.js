@@ -14,18 +14,13 @@ class OwnerMessageHeader extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      reply: ""
+      reply: "",
+      mid:""
     };
   }
 
   componentWillMount() {
-    this.props.checkValidity(() => {
-      if (this.props.tokenState.validity) {
-        this.props.history.push({
-          pathname: "/OwnerLogin"
-        });
-      }
-    });
+    this.props.checkValidity();
     this.props.getMessageOwner(localStorage.getItem("username")).then(() => {
       console.log("Messages Recieved");
     });
@@ -34,6 +29,11 @@ class OwnerMessageHeader extends Component {
   replyChangeHandler = e => {
     this.setState({
       reply: e.target.value
+    });
+  };
+  midChangeHandler = e => {
+    this.setState({
+      mid: e.target.value
     });
   };
 
@@ -70,6 +70,11 @@ class OwnerMessageHeader extends Component {
                 <a
                   className="btn btn-primary text-white"
                   data-toggle="modal"
+                  onClick={()=>{
+                    this.setState({
+                      mid:message._id
+                    })
+                  }}
                   data-target="#MessageModal">
                   <FontAwesomeIcon icon="envelope" />
                   &nbsp;&nbsp;&nbsp;Send Reply
@@ -119,16 +124,17 @@ class OwnerMessageHeader extends Component {
                         type="button"
                         data-dismiss="modal"
                         onClick={() => {
+                         
                           if (this.state.reply === "") {
                             alert("Reply Can't be left Empty");
                           } else {
-                            var data = {
+                            let  data = {
                               reply: this.state.reply,
-                              mid: message._id
+                              mid: this.state.mid
                             };
+                            console.log(data);
                             this.props.setOwnerReply(data).then(() => {
                               alert("Reply Sent Successfully!");
-                              this.forceUpdate();
                               this.setState({
                                 reply: ""
                               });

@@ -344,4 +344,37 @@ export const renderCurrenySelector = ({
       {touched && error && <span className="text-danger">{error}</span>}
     </div>
   </div>
+
+
+
+
+
+
 );
+
+const gender = [
+"Female",
+"Male"
+]
+
+export const renderGenderSelector = ({
+  input,
+  label,
+  meta: { touched, error }
+}) => (
+  <div>
+        <label>{label}</label>
+
+    <div>
+      <select {...input} className="form-control form-control-md">
+        <option value="">Select a Gender</option>
+        {gender.map(val => (
+          <option value={val} key={val}>
+            {val}
+          </option>
+        ))}
+      </select>
+      {touched && error && <span className="text-danger">{error}</span>}
+    </div>
+  </div>
+  );
