@@ -152,8 +152,13 @@ export function setUserInformation(data) {
   };
 }
 
-export function getUserInformation() {
-  let email = localStorage.getItem("username");
+export function getUserInformation(uemail) {
+  let email=""
+  if(uemail===""){
+   email = localStorage.getItem("username");
+  }else{
+    email=uemail
+  }
   console.log(email);
   return async dispatch => {
     try {

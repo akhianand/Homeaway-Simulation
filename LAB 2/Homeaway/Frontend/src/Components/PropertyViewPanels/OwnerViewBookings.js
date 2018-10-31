@@ -72,9 +72,12 @@ class OwnerBookingPanel extends Component {
             <br />
             <a
               onClick={() => {
-                this.setState({
-                  seeProfile: true
-                });
+                this.props.history.push({
+                  pathname: "/ViewProfile",
+                  state:{
+                    email:this.props.currentBooking.booking.travelleremail
+                  }
+                })
               }}
               className="btn btn-primary text-white">
               View Traveller Profile

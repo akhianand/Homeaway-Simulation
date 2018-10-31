@@ -20,7 +20,8 @@ class ProfileHeader extends Component {
   }
 
   componentWillMount() {
-    this.props.getUserInformation();
+    let email="";
+    this.props.getUserInformation(email);
   }
 
   onSaveProfileClickeListener = values => {
@@ -113,8 +114,10 @@ class ProfileHeader extends Component {
                     className="viewProfileButton btn btn-primary btn-lg btn-block"
                     onClick={()=>{
                       this.props.history.push({
-                        pathname: "/TravelDash"
-
+                        pathname: "/ViewProfile",
+                        state:{
+                          email:localStorage.getItem("username")
+                        }
                       })
                     }}>
                     View Profile
