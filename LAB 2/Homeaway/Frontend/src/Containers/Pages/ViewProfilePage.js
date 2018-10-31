@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import "react-dates/initialize";
-import axios from "axios";
 import { Redirect } from "react-router";
 import cookie from "react-cookies";
 //import OtherNav from "../Modules/Navbar/OtherNav";

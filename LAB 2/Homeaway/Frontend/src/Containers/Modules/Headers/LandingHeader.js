@@ -17,12 +17,7 @@ class LandingHeader extends Component {
       endDate: moment(values.when.endDate.toString()).format("L"),
       people: values.people
     };
-    let data2 = {
-      where: values.where,
-      when:{startDate: moment(values.when.startDate.toString()).format("L"),
-      endDate: moment(values.when.endDate.toString()).format("L")},
-      people: values.people
-    };
+
     // this.props.searchParams(data);
     this.props.getPropertiesWhere(data);
     this.props.history.push({

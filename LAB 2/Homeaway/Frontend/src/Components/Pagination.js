@@ -1,5 +1,4 @@
 import React, { Component, Fragment } from "react";
-import { timingSafeEqual } from "crypto";
 
 const LEFT_PAGE = "LEFT";
 const RIGHT_PAGE = "RIGHT";
@@ -143,7 +142,7 @@ class Paginations extends Component {
 
     if (!this.totalRecords) return null;
 
-    if (this.totalPages === 1) return null;
+    // if (this.totalPages === 1) return null;
 
     const { currentPage } = this.state;
     const pages = this.fetchPageNumbers();
@@ -157,7 +156,7 @@ class Paginations extends Component {
                   <li key={index} className="page-item">
                     <a
                       className="page-link"
-                      href="#"
+                      href=""
                       aria-label="Previous"
                       onClick={this.handleMoveLeft}>
                       <span aria-hidden="true">&laquo;</span>
@@ -171,7 +170,7 @@ class Paginations extends Component {
                   <li key={index} className="page-item">
                     <a
                       className="page-link"
-                      href="#"
+                      href=""
                       aria-label="Next"
                       onClick={this.handleMoveRight}>
                       <span aria-hidden="true">&raquo;</span>
@@ -188,7 +187,7 @@ class Paginations extends Component {
                   }`}>
                   <a
                     className="page-link"
-                    href="#"
+                    href=""
                     onClick={e => this.handleClick(page, e)}>
                     {page}
                   </a>

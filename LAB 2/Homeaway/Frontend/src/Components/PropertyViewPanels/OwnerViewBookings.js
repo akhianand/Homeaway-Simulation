@@ -4,7 +4,6 @@ import moment from "moment";
 import { DateRangePicker } from "react-dates";
 import "react-dates/lib/css/_datepicker.css";
 import { withRouter } from "react-router-dom";
-import { Redirect } from "react-router";
 import { connect } from "react-redux";
 import { getBooking } from "../../Actions/bookingActions";
 
