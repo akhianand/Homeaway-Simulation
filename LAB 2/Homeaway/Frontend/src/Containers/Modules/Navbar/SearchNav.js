@@ -38,10 +38,6 @@ class SearchNav extends Component {
     });
   }
 
-  componentDidMount(){
-    console.log("Search: ", this.props.searchParamState);
-
-  }
   render() {
     let email = localStorage.getItem("username");
     return (
@@ -113,8 +109,7 @@ class SearchNav extends Component {
 
 function mapStateToProps(state) {
   return {
-    searchParamState: state.SearchParamsReducer.data
-
+    searchProperty: state.SearchPropertyReducer
   };
 }
 

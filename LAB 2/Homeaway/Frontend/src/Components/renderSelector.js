@@ -378,3 +378,39 @@ export const renderGenderSelector = ({
     </div>
   </div>
   );
+
+
+  const cost = [
+    100,
+    200,
+    300,
+    400,
+    500,
+    600,
+    700,
+    800,
+    900,
+    1000
+    ]
+    
+    export const renderPriceList = ({
+      input,
+      label,
+      meta: { touched, error }
+    }) => (
+      <div>
+            <label>{label}</label>
+    
+        <div>
+          <select {...input} className="form-control form-control-md">
+            <option value="">Select a Price</option>
+            {cost.map(val => (
+              <option value={val} key={val}>
+                {val}
+              </option>
+            ))}
+          </select>
+          {touched && error && <span className="text-danger">{error}</span>}
+        </div>
+      </div>
+      );

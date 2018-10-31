@@ -131,9 +131,7 @@ export function getPropertiesWhere(data) {
             }
           }
         );
-        console.log(response);
         if (response.status === 200) {
-          console.log(response);
 
           if (response.data.filteredProperties.length === 0) {
             dispatch({
@@ -141,7 +139,6 @@ export function getPropertiesWhere(data) {
               payload: "No Properties Found"
             });
           } else {
-            console.log(response.data.filteredProperties);
             dispatch({
               type: SEARCH_PROPERTIES,
               payload: response.data.filteredProperties

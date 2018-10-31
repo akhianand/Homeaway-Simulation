@@ -23,7 +23,7 @@ class LandingHeader extends Component {
       endDate: moment(values.when.endDate.toString()).format("L")},
       people: values.people
     };
-    this.props.searchParams(data);
+    // this.props.searchParams(data);
     this.props.getPropertiesWhere(data);
     this.props.history.push({
       pathname: "/Properties",

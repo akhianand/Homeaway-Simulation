@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import "react-dates/initialize";
 import "react-dates/lib/css/_datepicker.css";
+import { renderPriceList } from "./renderSelector";
 import { renderFieldLarge } from "./renderField";
-import { DateRangePickerField } from "./DateRangePickerWrapper";
 import { Field, reduxForm } from "redux-form";
 import { connect } from "react-redux";
 
@@ -35,71 +35,46 @@ const startGtEnd = value => {
   }
 };
 
-class SearchPropertyForm extends Component {
+class FilterPropertyForm extends Component {
   render() {
     const { handleSubmit, color } = this.props;
     return (
       <form onSubmit={handleSubmit}>
         <div className="card-body ">
           <div className="row">
-            <div
-              className={
-                color === "white"
-                  ? "col-4 text-left text-white"
-                  : "col-4 text-left  "
-              }>
-              <small>Where do you want to go?</small>
+            <div className="col-2 text-left">
               <Field
-                name="where"
-                type="text"
-                component={renderFieldLarge}
-                label="Where?"
-                validate={[required, maxLength20, minLength2, alphabets]}
-                warn={alphabets}
+                name="lowerlimit"
+                component={renderPriceList}
+                label="Lower Limit"
               />
             </div>
-            <div
-              className={
-                color === "white"
-                  ? "col-4 text-left text-white"
-                  : "col-4 text-left  "
-              }>
-              <small>When?</small>
-
+            <div className="col-2 text-left">
               <Field
-                component={DateRangePickerField}
-                name="when"
-                validate={[startGtEnd, required]}
+                name="upperlimit"
+                component={renderPriceList}
+                label="UpperLimit"
               />
             </div>
-            <div
-              className={
-                color === "white"
-                  ? "col-2 text-left text-white"
-                  : "col-2 text-left  "
-              }>
-              <small>No. of People</small>
+            <div className="col-3 text-left">
+              <small>Bedrooms</small>
 
               <Field
-                name="people"
+                name="bedrooms"
                 type="number"
                 component={renderFieldLarge}
-                label="People"
-                validate={[required, number, minValue1, maxValue20]}
+                label="Bedrooms"
+                validate={[number, minValue1, maxValue20]}
               />
             </div>
-            <div
-              className={
-                color === "white"
-                  ? "col-2 text-left text-white"
-                  : "col-2 text-left  "
-              }>
+
+            <div className="col-4 text-left">
               <br />
               <button
                 type="button"
                 onClick={handleSubmit}
                 className=" roundcornerbutton btn btn-primary btn-lg ">
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Search&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Filter&nbsp;&nbsp;&nbsp;&nbsp;
               </button>
             </div>
           </div>
@@ -109,8 +84,8 @@ class SearchPropertyForm extends Component {
   }
 }
 
-SearchPropertyForm = reduxForm({
-  form: "searchPropertyForm"
-})(SearchPropertyForm);
+FilterPropertyForm = reduxForm({
+  form: "filterPropertyForm"
+})(FilterPropertyForm);
 
-export default connect(state => ({}))(SearchPropertyForm);
+export default connect(state => ({}))(FilterPropertyForm);

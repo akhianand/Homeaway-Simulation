@@ -9,21 +9,96 @@ import { connect } from "react-redux";
 import { checkValidity } from "../../Actions/userActions";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import SearchNav from "../Modules/Navbar/SearchNav";
+import Paginations from "../../Components/Pagination";
+import FilterPropertyForm from "../../Components/FilterComponent";
+
 moment.suppressDeprecationWarnings = true;
 
 class ShowAllPropertiesPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      properties: [],
+      currentProperties: [],
+      filteredProperties: [],
+      currentPage: null,
+      totalPages: null,
       propertyClicked: false,
-      propertypid: ""
+      propertypid: "",
+      showFilter: false,
+      filterText: "Show Filter",
+
     };
+
+    this.onFilterClicked = this.onFilterClicked.bind(this);
   }
   componentDidMount() {
     this.props.checkValidity();
+  };
+
+  onPageChanged = data => {
+    const { currentPage, totalPages, pageLimit } = data;
+    const offset = (currentPage - 1) * pageLimit;
+    const currentProperties = this.state.filteredProperties.slice(
+      offset,
+      offset + pageLimit
+    );
+    this.setState({ currentPage, currentProperties, totalPages });
+  };
+
+  onFilterClicked(values) {
+
+    let lowerlimit =0;
+    let upperlimit=10000;
+    let bedrooms=1;
+    if(values.lowerlimit){
+      lowerlimit=values.lowerlimit
+    }
+    if(values.upperlimit){
+      upperlimit=values.upperlimit
+    }
+    if(values.bedrooms){
+      bedrooms=values.bedrooms
+    }
+
+
+    if(this.props.searchProperty){
+      let fp=[];
+     
+
+      this.props.searchProperty.forEach(property => {
+        if (
+          property.baserent >= lowerlimit &&
+          property.baserent <= upperlimit &&
+          property.bedrooms >= bedrooms
+        ) {
+          fp.push(property);
+        }
+  
+      });
+
+      console.log(fp);
+      this.setState({
+        filteredProperties: fp
+      });
+    }
+    this.forceUpdate();
+    
   }
+
+componentWillReceiveProps(nextprops){
+  console.log(nextprops);
+  this.setState({
+    filteredProperties:nextprops.searchProperty
+  })
+  this.forceUpdate();
+}
+
+
+
   render() {
+    let { currentProperties } = this.state;
+
+    console.log("length",currentProperties.length)
     if (this.props.isValidTokenState !== undefined) {
       if (!this.props.isValidTokenState) {
         this.props.history.push({
@@ -31,9 +106,10 @@ class ShowAllPropertiesPage extends Component {
         });
       }
     }
-    let properties = this.props.searchProperty.properties.map(property => {
-      let ImageUrl = "./uploads/" + property.email + "/" + property.photos[0];
+    let properties =null;
 
+     properties = currentProperties.map(property => {
+      let ImageUrl = "./uploads/" + property.email + "/" + property.photos[0];
       return (
         <a
           key={property._id}
@@ -107,17 +183,78 @@ class ShowAllPropertiesPage extends Component {
       );
     });
 
-    if (this.props.searchProperty.properties.length === 0) {
+    if (this.state.filteredProperties.length === 0) {
       properties = <h2>No Properties Found</h2>;
     }
 
     return (
       <div>
         <SearchNav />
+
+        <div className="row">
+          <div className="col-2 ">
+            <div className="container">
+              {" "}
+              <br />
+              <button
+                type="button"
+                onClick={() => {
+                  if (this.state.showFilter) {
+                    this.setState({
+                      showFilter: false,
+                      filterText: "Show Filter"
+                    });
+                  } else {
+                    this.setState({
+                      showFilter: true,
+                      filterText: "Hide Filter"
+                    });
+                  }
+                }}
+                class="btn btn-primary btn-lg">
+                {this.state.filterText}
+              </button>
+            </div>
+          </div>
+
+          <div className="col-10  ">
+            {this.state.showFilter ? (
+              <FilterPropertyForm onSubmit={this.onFilterClicked} />
+            ) : null}
+          </div>
+        </div>
         <br />
-        <br />
-        <br />
-        <div className="container text-center   ">{properties}</div>
+
+        <div className="container text-center   ">
+          {this.state.filteredProperties.length ? (
+            <div>
+
+              <div className="row">
+                <small>
+                  Your Results have been Paginated, use this to navigate between
+                  pages
+                </small>
+                <br />
+              </div>
+              <div className="row">
+                <div>
+                  <Paginations
+                    totalRecords={this.state.filteredProperties.length}
+                    pageLimit={10}
+                    pageNeighbours={1}
+                    onPageChanged={this.onPageChanged}
+                    filteredProperties={this.state.filteredProperties}
+                    
+                  />
+                </div>{" "}
+              </div>
+            </div>
+          ) : null}
+          <br />
+
+          <br />
+          {properties}
+        </div>
       </div>
     );
   }
@@ -125,7 +262,7 @@ class ShowAllPropertiesPage extends Component {
 
 function mapStateToProps(state) {
   return {
-    searchProperty: state.SearchPropertyReducer,
+    searchProperty: state.SearchPropertyReducer.properties,
     isValidTokenState: state.TokenReducer.validity
   };
 }
