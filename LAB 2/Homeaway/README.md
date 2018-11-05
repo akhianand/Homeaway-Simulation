@@ -1,4 +1,4 @@
-#Homeaway React Application
+# Homeaway React Application
 
 Run Following command on Frontend and Backend
 
@@ -16,7 +16,7 @@ npm start
 ```
 
 
-Run Following command on Backend 
+Run Following command on Backend and Kafka-Backend
 
 ``` 
 nodemon
