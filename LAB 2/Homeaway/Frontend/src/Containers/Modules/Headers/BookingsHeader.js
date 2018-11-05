@@ -12,9 +12,8 @@ class BookingsHeader extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      properties: [],
       filteredProperties: [],
-      currentProperties:[],
+      currentProperties: [],
       currentPage: null,
       totalPages: null,
       propertyClicked: false,
@@ -27,7 +26,17 @@ class BookingsHeader extends Component {
     };
     this.onFilterClicked = this.onFilterClicked.bind(this);
   }
+  onPageChanged = data => {
+    const { currentPage, totalPages, pageLimit } = data;
+    const offset = (currentPage - 1) * pageLimit;
+    const currentProperties = this.state.filteredProperties.slice(
+      offset,
+      offset + pageLimit
+    );
+    this.setState({ currentPage, currentProperties, totalPages });
+  };
 
+  
   onFilterClicked(values) {
     let search = "";
     let startDate = moment(Date.now());
@@ -52,7 +61,12 @@ class BookingsHeader extends Component {
         let from = moment(booking.bookingfrom);
         let to = moment(booking.bookingto);
 
-        if ((booking.propertyname.includes(search) || booking.city.includes(search)) && (from.isSameOrAfter(startDate) &&  to.isSameOrBefore(endDate)) || (from.isSameOrBefore(startDate) &&  to.isSameOrAfter(endDate)) ){
+        if (
+          ((booking.propertyname.includes(search) ||
+            booking.city.includes(search)) &&
+            (from.isSameOrAfter(startDate) && to.isSameOrBefore(endDate))) ||
+          (from.isSameOrBefore(startDate) && to.isSameOrAfter(endDate))
+        ) {
           fp.push(booking);
         }
       });
@@ -63,43 +77,34 @@ class BookingsHeader extends Component {
       });
     }
     this.forceUpdate();
-
   }
 
   componentWillMount() {
-    this.props.checkValidity();
-  }
-
-  componentDidMount() {
     this.props
-      .getTravellerBookings(localStorage.getItem("username"))
-      .then(() => {
-        console.log(this.props.travelBookings.bookings);
-      });
+    .getTravellerBookings(localStorage.getItem("username"))
+    .then(() => {
+      console.log(this.props.travelBookings.bookings);
+          this.setState({
+      filteredProperties: this.props.travelBookings.bookings
+    });
+    });  
   }
 
-  onPageChanged = data => {
-    const { currentPage, totalPages, pageLimit } = data;
-    const offset = (currentPage - 1) * pageLimit;
-    const currentProperties = this.state.filteredProperties.slice(
-      offset,
-      offset + pageLimit
-    );
-    this.setState({ currentPage, currentProperties, totalPages });
-  };
-
-  componentWillReceiveProps(nextprops){
-    this.setState({
-      filteredProperties:nextprops.travelBookings.bookings
-    })
-    this.forceUpdate();
-  }
   
 
+
+
+  // componentWillReceiveProps(nextprops) {
+  //   console.log(nextprops);
+  //   this.setState({
+  //     filteredProperties: nextprops.travelBookings.bookings
+  //   });
+  //   this.forceUpdate();
+  // }
+
   render() {
-
-    let { currentProperties } = this.state;
-
+    let { currentProperties,filteredProperties } = this.state;
+    console.log("length",filteredProperties.length)
 
     let bookings = null;
     if (this.props.travelBookings.bookings.length === 0) {
@@ -115,81 +120,79 @@ class BookingsHeader extends Component {
           </Link>
         </div>
       );
-    } 
+    }
 
+    bookings = currentProperties.map(booking => {
+      let from = moment(new Date(booking.bookingfrom)).format("MM/DD/YYYY");
+      let to = moment(new Date(booking.bookingto)).format("MM/DD/YYYY");
+      let status = null;
+      if (Date.now() > new Date(booking.bookingto)) {
+        status = (
+          <small className="text-danger">This Booking has Elapsed</small>
+        );
+      } else if (
+        Date.now() >=
+        new Date(booking.bookingfrom) >=
+        new Date(booking.bookingto)
+      ) {
+        status = (
+          <small className="text-neutral">This Booking is Ongoing</small>
+        );
+      } else if (Date.now() < new Date(booking.bookingfrom)) {
+        status = (
+          <small className="text-success">This Booking is Pending</small>
+        );
+      }
+      return (
+        <div key={booking._id} className="col-12">
+          <br />
+          <br />
+          <div className="card shadow-lg">
+            <h5 className="card-header">Booking Reference: {booking._id}</h5>
+            <div className="card-body">
+              {status}
+              <br />
 
-      bookings = currentProperties.map(booking => {
-        let from = moment(new Date(booking.bookingfrom)).format("MM/DD/YYYY");
-        let to = moment(new Date(booking.bookingto)).format("MM/DD/YYYY");
-        let status = null;
-        if (Date.now() > new Date(booking.bookingto)) {
-          status = (
-            <small className="text-danger">This Booking has Elapsed</small>
-          );
-        } else if (
-          Date.now() >=
-          new Date(booking.bookingfrom) >=
-          new Date(booking.bookingto)
-        ) {
-          status = (
-            <small className="text-neutral">This Booking is Ongoing</small>
-          );
-        } else if (Date.now() < new Date(booking.bookingfrom)) {
-          status = (
-            <small className="text-success">This Booking is Pending</small>
-          );
-        }
-        return (
-          <div key={booking._id} className="col-12">
-            <br />
-            <br />
-            <div className="card shadow-lg">
-              <h5 className="card-header">Booking Reference: {booking._id}</h5>
-              <div className="card-body">
-                {status}
-                <br />
+              <h5 className="card-title">
+                {from}
+                &nbsp;&nbsp;to&nbsp;&nbsp;
+                {to}
+              </h5>
+              <p className="card-text">
+                Homeaway @ <b>{booking.city}</b>
+              </p>
+              <p className="card-text">
+                <b>{booking.propertyname}</b>
+              </p>
 
-                <h5 className="card-title">
-                  {from}
-                  &nbsp;&nbsp;to&nbsp;&nbsp;
-                  {to}
-                </h5>
-                <p className="card-text">
-                  Homeaway @ <b>{booking.city}</b>
-                </p>
-                <p className="card-text">
-                  <b>{booking.propertyname}</b>
-                </p>
+              <p className="card-text">
+                Expense
+                <b>
+                  &nbsp;
+                  {booking.cost}
+                  {booking.currency}
+                </b>
+              </p>
 
-                <p className="card-text">
-                  Expense
-                  <b>
-                    &nbsp;
-                    {booking.cost}
-                    {booking.currency}
-                  </b>
-                </p>
-
-                <a
-                  onClick={() => {
-                    this.props.history.push({
-                      pathname: "/PropertyView",
-                      state: {
-                        pid: booking.propertyid,
-                        bid: booking._id,
-                        callfrom: "BookedCustomer"
-                      }
-                    });
-                  }}
-                  className="btn btn-primary text-white">
-                  View Booking
-                </a>
-              </div>
+              <a
+                onClick={() => {
+                  this.props.history.push({
+                    pathname: "/PropertyView",
+                    state: {
+                      pid: booking.propertyid,
+                      bid: booking._id,
+                      callfrom: "BookedCustomer"
+                    }
+                  });
+                }}
+                className="btn btn-primary text-white">
+                View Booking
+              </a>
             </div>
           </div>
-        );
-      });
-    
+        </div>
+      );
+    });
 
     return (
       <div className="container">
@@ -227,11 +230,10 @@ class BookingsHeader extends Component {
         </div>
         <br />
 
-<br />
+        <br />
         <div className="row">
-        {this.props.travelBookings.bookings.length ? (
+          {this.state.filteredProperties.length ? (
             <div>
-
               <div className="row">
                 <small>
                   Your Results have been Paginated, use this to navigate between
@@ -247,15 +249,15 @@ class BookingsHeader extends Component {
                     pageNeighbours={1}
                     onPageChanged={this.onPageChanged}
                     filteredProperties={this.state.filteredProperties}
-                    
                   />
                 </div>{" "}
               </div>
             </div>
-          ) : null}     <br />
-
+          ) : null}{" "}
           <br />
-        {bookings}</div>
+          <br />
+          {bookings}
+        </div>
       </div>
     );
   }

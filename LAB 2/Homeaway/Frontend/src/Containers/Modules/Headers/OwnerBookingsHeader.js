@@ -71,14 +71,13 @@ class OwnerBookingsHeader extends Component {
   }
 
   componentWillMount() {
-    this.props.checkValidity();
-  }
-
-  componentDidMount() {
     this.props
-      .getOwnerBookings(localStorage.getItem("username"))
+      .getTravellerBookings(localStorage.getItem("username"))
       .then(() => {
         console.log(this.props.travelBookings.bookings);
+        this.setState({
+          filteredProperties:this.props.travelBookings.bookings
+        })
       });
   }
 
@@ -92,13 +91,7 @@ class OwnerBookingsHeader extends Component {
     this.setState({ currentPage, currentProperties, totalPages });
   };
 
-  componentWillReceiveProps(nextprops){
-    this.setState({
-      filteredProperties:nextprops.travelBookings.bookings
-    })
-    this.forceUpdate();
-  }
-  
+
 
   render() {
 

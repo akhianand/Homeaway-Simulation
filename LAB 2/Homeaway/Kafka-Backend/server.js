@@ -18,8 +18,7 @@ mongoose.Promise = require('bluebird');
 
 //Database Connection
 mongoose.connect(
-  "mongodb://127.0.0.1:27017/Homeaway",
-  {
+  "mongodb://admin:abc123@ds129946.mlab.com:29946/homeaway",  {
     useCreateIndex: true,
     useNewUrlParser: true,
     poolSize:500
