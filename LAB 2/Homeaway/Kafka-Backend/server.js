@@ -17,22 +17,21 @@ const mongoose = require("mongoose");
 mongoose.Promise = require('bluebird');
 
 //Database Connection
-mongoose
-  .connect(
-    "mongodb://127.0.0.1:27017/Homeaway",
-    {
-      useCreateIndex: true,
-      useNewUrlParser: true
-    }
-  )
-  .then(
-    () => {
-      console.log("\nSucessfully Connected to MogoDB\n");
-    },
-    err => {
-      console.log("Error Connecting to MogoDB");
-    }
+mongoose.connect(
+  "mongodb://127.0.0.1:27017/Homeaway",
+  {
+    useCreateIndex: true,
+    useNewUrlParser: true,
+    poolSize:500
+  }
+).then(
+ 
+  () => { console.log("Sucessfully Connected to MogoDB");},
+   
+  err => { console.log("Error Connecting to MogoDB" );}
+   
   );
+
 
 function handleTopicRequest(topic_name, fname) {
   var consumer = connection.getConsumer(topic_name);
