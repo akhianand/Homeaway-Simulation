@@ -1,7 +1,3 @@
-
-
-
-
 import React, { Component } from "react";
 import "react-dates/initialize";
 import { withRouter, Link } from "react-router-dom";
@@ -18,7 +14,7 @@ class OwnerBookingsHeader extends Component {
     this.state = {
       properties: [],
       filteredProperties: [],
-      currentProperties:[],
+      currentProperties: [],
       currentPage: null,
       totalPages: null,
       propertyClicked: false,
@@ -56,7 +52,12 @@ class OwnerBookingsHeader extends Component {
         let from = moment(booking.bookingfrom);
         let to = moment(booking.bookingto);
 
-        if ((booking.propertyname.includes(search) || booking.city.includes(search)) && (from.isSameOrAfter(startDate) &&  to.isSameOrBefore(endDate)) || (from.isSameOrBefore(startDate) &&  to.isSameOrAfter(endDate)) ){
+        if (
+          ((booking.propertyname.includes(search) ||
+            booking.city.includes(search)) &&
+            (from.isSameOrAfter(startDate) && to.isSameOrBefore(endDate))) ||
+          (from.isSameOrBefore(startDate) && to.isSameOrAfter(endDate))
+        ) {
           fp.push(booking);
         }
       });
@@ -67,7 +68,6 @@ class OwnerBookingsHeader extends Component {
       });
     }
     this.forceUpdate();
-
   }
 
   componentWillMount() {
@@ -76,8 +76,8 @@ class OwnerBookingsHeader extends Component {
       .then(() => {
         console.log(this.props.travelBookings.bookings);
         this.setState({
-          filteredProperties:this.props.travelBookings.bookings
-        })
+          filteredProperties: this.props.travelBookings.bookings
+        });
       });
   }
 
@@ -91,12 +91,8 @@ class OwnerBookingsHeader extends Component {
     this.setState({ currentPage, currentProperties, totalPages });
   };
 
-
-
   render() {
-
     let { currentProperties } = this.state;
-
 
     let bookings = null;
     if (this.props.travelBookings.bookings.length === 0) {
@@ -112,9 +108,7 @@ class OwnerBookingsHeader extends Component {
           </Link>
         </div>
       );
-    } 
-
-else{
+    } else {
       bookings = currentProperties.map(booking => {
         let from = moment(new Date(booking.bookingfrom)).format("MM/DD/YYYY");
         let to = moment(new Date(booking.bookingto)).format("MM/DD/YYYY");
@@ -167,18 +161,17 @@ else{
                   </b>
                 </p>
 
-               <a
-                    
-                    onClick={() => {
-                      this.props.history.push({
-                        pathname: "/PropertyView",
-                        state: {
-                          pid: booking.propertyid,
-                          bid:booking._id,
-                          callfrom: "OwnerBooking"
-                        }
-                      });
-                    }}
+                <a
+                  onClick={() => {
+                    this.props.history.push({
+                      pathname: "/PropertyView",
+                      state: {
+                        pid: booking.propertyid,
+                        bid: booking._id,
+                        callfrom: "OwnerBooking"
+                      }
+                    });
+                  }}
                   className="btn btn-primary text-white">
                   View Booking
                 </a>
@@ -225,11 +218,10 @@ else{
         </div>
         <br />
 
-<br />
+        <br />
         <div className="row">
-        {this.props.travelBookings.bookings.length ? (
+          {this.props.travelBookings.bookings.length ? (
             <div>
-
               <div className="row">
                 <small>
                   Your Results have been Paginated, use this to navigate between
@@ -245,15 +237,15 @@ else{
                     pageNeighbours={1}
                     onPageChanged={this.onPageChanged}
                     filteredProperties={this.state.filteredProperties}
-                    
                   />
                 </div>{" "}
               </div>
             </div>
-          ) : null}     <br />
-
+          ) : null}{" "}
           <br />
-        {bookings}</div>
+          <br />
+          {bookings}
+        </div>
       </div>
     );
   }
@@ -268,6 +260,6 @@ function mapStateToProps(state) {
 export default withRouter(
   connect(
     mapStateToProps,
-    { getOwnerBookings,checkValidity }
+    { getOwnerBookings, checkValidity }
   )(OwnerBookingsHeader)
 );
