@@ -110,20 +110,44 @@ export function signUp(data) {
 export function setUserInformation(data) {
   return async dispatch => {
     try {
-      axios.defaults.withCredentials = true;
-      axios.defaults.headers.common["Authorization"] =
-        "JWT " + localStorage.getItem("user");
-      var response = await axios.post(
-        `${ROOT_URL}/user/setUserInformation`,
-        data
-      );
-      if (response.status === 200) {
-        dispatch({
-          type: PROFILE_FETCHED,
-          payload: response.data.user
-        });
-      }
+      var response = await client.mutate({
+        mutation: gql`
+          mutation {
+            updateUser(
+              email: "${data.email}",
+              fname: "${data.fname}",
+              lname: "${data.lname}",
+              aboutme: "${data.aboutme}",
+              city: "${data.city}",
+              school: "${data.school}",
+              phone: "${data.phone}",
+              hometown: "${data.hometown}",
+              languages: "${data.languages}",
+              gender: "${data.gender}"
+            ) {
+              email
+              fname
+              lname
+              aboutme
+              city
+              school
+              hometown
+              languages
+              gender
+              phone
+              _id
+            }
+          }
+        `
+      });
+      console.log(response);
+      dispatch({
+        type: PROFILE_FETCHED,
+        payload: response.data.user
+      });
     } catch (error) {
+      console.log(error);
+
       dispatch({
         type: PROFILE_ERROR,
         payload: "An Error Occoured"
@@ -146,7 +170,6 @@ export function getUserInformation(uemail) {
         query: gql`{
           user(email: "${email}"){
            email
-           password
            fname
            lname
            aboutme
@@ -167,7 +190,7 @@ export function getUserInformation(uemail) {
         payload: response.data.user
       });
     } catch (error) {
-      console.log(error)
+      console.log(error);
       dispatch({
         type: PROFILE_ERROR,
         payload: "An Error Occoured"

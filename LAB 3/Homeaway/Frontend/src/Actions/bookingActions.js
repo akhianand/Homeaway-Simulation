@@ -27,23 +27,48 @@ const client = new ApolloClient({
   uri: `${ROOT_URL}/graphql`
 });
 
+
+
+
 export function createNewBooking(data) {
   console.log(data);
   return async dispatch => {
     try {
-      axios.defaults.withCredentials = true;
-      axios.defaults.headers.common["Authorization"] =
-        "JWT " + localStorage.getItem("user");
-      var response = await axios.post(
-        `${ROOT_URL}/user/createNewBooking`,
-        data
-      );
-      if (response.status === 200) {
+      var response = await client.mutate({
+        mutation: gql`
+          mutation {
+            addBooking(
+              bookingfrom: "${data.bookingfrom}",
+              bookingto: "${data.bookingto}",
+              travelleremail: "${data.travelleremail}",
+              propertyowneremail: "${data.propertyowneremail}",
+              propertyid: "${data.propertyid}",
+              nights: ${data.nights},
+              cost: ${data.cost},
+              city: "${data.city}",
+              currency: "${data.currency}",
+              propertyname: "${data.propertyname}"
+            ) {
+              bookingfrom
+              bookingto
+              travelleremail
+              propertyowneremail
+              propertyid
+              cost
+              city
+              currency
+              propertyname
+
+            }
+          }
+        `
+      });
+      console.log(response);
         dispatch({
           type: BOOKING_SUCCESS,
           payload: "Booking Added SuccessFully"
         });
-      }
+      
     } catch (error) {
       dispatch({
         type: BOOKING_FAILURE,

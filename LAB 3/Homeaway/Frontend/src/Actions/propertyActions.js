@@ -54,36 +54,41 @@ export function getAllPropertiesOfUser() {
   };
 }
 
+
 export function getProperty(id) {
   return async dispatch => {
     try {
     var response = await client.query({
       query: gql`{
-        property(id: ${id}) {
+        property(id: "${id}") {
           headline
           addressline1
           addressline2
           city
           state
+          zip
           country
           accomodates
           bedrooms
           bathrooms
-          bathrooms
           minimumstay
           description
           phone
+          baserent
+          currency
+          availablefrom
+          availableto
         }
       }
     `
     });
-      if (response.status === 200) {
         dispatch({
           type: PROPERTY,
           payload: response.data.property
         });
-      }
+    
     } catch (error) {
+      console.log(error);
       dispatch({
         type: PROPERTY_FETCH_ERROR,
         payload: error
@@ -150,3 +155,6 @@ export function getPropertiesWhere(input) {
     };
   }
 }
+
+
+

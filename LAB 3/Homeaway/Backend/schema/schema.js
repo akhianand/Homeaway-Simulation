@@ -9,7 +9,7 @@ const {
   GraphQLSchema,
   GraphQLInt,
   GraphQLFloat,
-  GraphQLList,
+  GraphQLList
 } = graphql;
 
 const UserType = new GraphQLObjectType({
@@ -39,7 +39,7 @@ const BookingType = new GraphQLObjectType({
     propertyowneremail: { type: GraphQLString },
     propertyid: { type: GraphQLString },
     nights: { type: GraphQLInt },
-    cost: { type: GraphQLString },
+    cost: { type: GraphQLInt },
     city: { type: GraphQLString },
     currency: { type: GraphQLString },
     propertyname: { type: GraphQLString },
@@ -177,7 +177,6 @@ const RootQuery = new GraphQLObjectType({
         email: { type: GraphQLString }
       },
       resolve(parent, args) {
-
         return new Promise((resolve, reject) => {
           BookingModel.find({ travelleremail: args.email }).then(bookings => {
             resolve(bookings);
@@ -216,56 +215,87 @@ const RootQuery = new GraphQLObjectType({
   }
 });
 
-
-  console.log("Inside API Request: /createNewBooking");
-
-
-
-
+console.log("Inside API Request: /createNewBooking");
 
 const Mutation = new GraphQLObjectType({
-  name: 'Mutation',
+  name: "Mutation",
   fields: {
-      addBooking: {
-          type: BookingType,
-          args: {
-              bookingfrom: { type: GraphQLString },
-              bookingto: { type: GraphQLString },
-              travelleremail: { type: GraphQLString },
-              propertyowneremail: { type: GraphQLString },
-              propertyid: { type: GraphQLString },
-              nights: { type: GraphQLInt },
-              cost: { type: GraphQLString },
-              city: { type: GraphQLString },
-              currency: { type: GraphQLString },
-              propertyname: { type: GraphQLString }
-          },
-          resolve(parent, args){
-            return new Promise((resolve, reject) => {
-              const booking = BookingModel.create({
-                bookingfrom: req.body.bookingfrom,
-                bookingto: req.body.bookingto,
-                travelleremail: req.body.travelleremail,
-                propertyowneremail: req.body.propertyowneremail,
-                propertyid: req.body.propertyid,
-                nights: req.body.nights,
-                cost: req.body.cost,
-                currency: req.body.currency,
-                city: req.body.city,
-                propertyname: req.body.propertyname
-              })
-                .then(book => {
-                  resolve(book)
-                });
-            });
-          }
+    addBooking: {
+      type: BookingType,
+      args: {
+        bookingfrom: { type: GraphQLString },
+        bookingto: { type: GraphQLString },
+        travelleremail: { type: GraphQLString },
+        propertyowneremail: { type: GraphQLString },
+        propertyid: { type: GraphQLString },
+        nights: { type: GraphQLInt },
+        cost: { type: GraphQLInt },
+        city: { type: GraphQLString },
+        currency: { type: GraphQLString },
+        propertyname: { type: GraphQLString }
+      },
+      resolve(parent, args) {
+        var startDate = moment(args.bookingfrom, "MM/DD/YYYY").toDate();
+          var endDate = moment(args.bookingto, "MM/DD/YYYY").toDate();
+        return new Promise((resolve, reject) => {
+          const booking = BookingModel.create({
+            bookingfrom: startDate,
+            bookingto: endDate,
+            travelleremail: args.travelleremail,
+            propertyowneremail: args.propertyowneremail,
+            propertyid: args.propertyid,
+            nights: args.nights,
+            cost: args.cost,
+            currency: args.currency,
+            city: args.city,
+            propertyname: args.propertyname
+          }).then(book => {
+            resolve(book);
+          });
+        });
       }
+    },
+    updateUser: {
+      type: UserType,
+      args: {
+        email: { type: GraphQLString },
+        fname: { type: GraphQLString },
+        lname: { type: GraphQLString },
+        aboutme: { type: GraphQLString },
+        city: { type: GraphQLString },
+        school: { type: GraphQLString },
+        phone: { type: GraphQLString },
+        hometown: { type: GraphQLString },
+        languages: { type: GraphQLString },
+        gender: { type: GraphQLString },
+        propertyname: { type: GraphQLString }
+      },
+      resolve(parent, args) {
+        return new Promise((resolve, reject) => {
+          const user = UserModel.findOneAndUpdate(
+            { email: args.email },
+            {
+              fname: args.fname,
+              lname: args.lname,
+              aboutme: args.aboutme,
+              city: args.city,
+              school: args.school,
+              phone: args.phone,
+              hometown: args.hometown,
+              languages: args.languages,
+              gender: args.gender,
+              propertyname: args.propertyname
+            }
+          ).then(user => {
+            resolve(user);
+          });
+        });
+      }
+    }
   }
 });
 
-
-
 module.exports = new GraphQLSchema({
   query: RootQuery,
-  mutation:Mutation
+  mutation: Mutation
 });

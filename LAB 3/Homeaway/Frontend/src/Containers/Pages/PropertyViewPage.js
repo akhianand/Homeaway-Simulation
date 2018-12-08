@@ -45,7 +45,7 @@ class PropertyViewPage extends Component {
                 pid={this.props.location.state.pid}
               />
             </div>
-            {/* <div className="col-4">{sidepanel}</div> */}
+            <div className="col-4">{sidepanel}</div>
           </div>
         </div>
       </div>
