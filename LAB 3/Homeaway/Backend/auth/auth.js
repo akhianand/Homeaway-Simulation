@@ -6,8 +6,6 @@ const UserModel = require("../model/usermodel");
 
 
 
-
-
 passport.use(
   "signup",
   new localStrategy(

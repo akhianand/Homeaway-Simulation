@@ -177,12 +177,14 @@ const RootQuery = new GraphQLObjectType({
         email: { type: GraphQLString }
       },
       resolve(parent, args) {
-        return new Promise((resolve, reject) => {
-          BookingModel.find({ travelleremail: args.email }).then(bookings => {
+         return new Promise((resolve, reject) => {
+            BookingModel.find({ travelleremail: args.email }).then(
+          bookings => {
             resolve(bookings);
-          });
-        });
-      }
+          }
+        );
+         })
+        }
     },
     ownerBookings: {
       type: new GraphQLList(BookingType),
@@ -235,10 +237,12 @@ const Mutation = new GraphQLObjectType({
         propertyname: { type: GraphQLString }
       },
       resolve(parent, args) {
-        var startDate = moment(args.bookingfrom, "MM/DD/YYYY").toDate();
-          var endDate = moment(args.bookingto, "MM/DD/YYYY").toDate();
+        var startDate =  new Date(Number(args.bookingfrom));
+        var endDate =  new Date(Number(args.bookingto));
+        // console.log("Start Date ",startDate);
+        // console.log("End Date", args.bookingto);
         return new Promise((resolve, reject) => {
-          const booking = BookingModel.create({
+          BookingModel.create({
             bookingfrom: startDate,
             bookingto: endDate,
             travelleremail: args.travelleremail,

@@ -55,3 +55,38 @@ export default withApollo(Test);
 
 
 
+const QUERY_PROPERTY_VIEW = gql`
+  query property($id: String) {
+    property(id: $id) {
+      headline
+      addressline1
+      addressline2
+      city
+      state
+      country
+      accomodates
+      bedrooms
+      bathrooms
+      bathrooms
+      minimumstay
+      description
+      phone
+    }
+  }
+`;
+
+
+const QUERY_TRAVELLER_BOOKINGS = gql`
+  query travellerBookings($email: String) {
+    travellerBookings(email: $email) {
+      bookingfrom
+      bookingto
+      city
+      propertyname
+      cost
+      currency
+      propertyid
+      _id
+    }
+  }
+`;

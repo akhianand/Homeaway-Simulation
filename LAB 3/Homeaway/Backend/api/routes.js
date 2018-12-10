@@ -65,24 +65,6 @@ router.post("/login", async (req, res, next) => {
   })(req, res, next);
 });
 
-router.get("/uploads/:email/:photo", function(req, res, next) {
-  var em = req.params.email;
-  var options = {
-    root: __dirname + "/uploads/" + em,
-    dotfiles: "deny",
-    headers: {
-      "x-timestamp": Date.now(),
-      "x-sent": true
-    }
-  };
-  var fileName = req.params.photo;
-  res.sendFile(fileName, options, function(err) {
-    if (err) {
-      next(err);
-    } else {
-    }
-  });
-});
 
 
 
