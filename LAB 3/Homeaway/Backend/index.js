@@ -36,6 +36,7 @@ mongoose
     () => {
       console.log("Sucessfully Connected to MogoDB");
     },
+
     err => {
       console.log("Error Connecting to MogoDB");
     }
@@ -54,6 +55,11 @@ const routes = require("./api/routes");
 
 
 app.use("/", routes);
+// app.use("/graphql", graphqlHTTP({
+//   schema,
+//   graphiql: true
+// }));
+
 app.use("/graphql",passport.authenticate("jwt", { session: false }), graphqlHTTP({
   schema,
   graphiql: true
@@ -69,3 +75,6 @@ app.use(function(err, req, res, next) {
 app.listen(8000, () => {
   console.log("Server Started and Listening on Port 8000");
 });
+
+
+

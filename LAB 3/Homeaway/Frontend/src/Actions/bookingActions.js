@@ -130,6 +130,7 @@ export function getOwnerBookings(uemail) {
           }
           `
       });
+      console.log(response);
       dispatch({
         type: OWNER_BOOKING_SUCCESS,
         payload: response.data.ownerBookings

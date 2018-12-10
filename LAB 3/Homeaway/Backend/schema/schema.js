@@ -90,9 +90,13 @@ const RootQuery = new GraphQLObjectType({
       type: UserType,
       args: { email: { type: GraphQLString } },
       resolve(parent, args) {
-        console.log(args.email);
+        console.log("Inside GraphQL Resolve for --> User");
+        console.log("Args", args);
+
         return new Promise((resolve, reject) => {
           UserModel.findOne({ email: args.email }).then(user => {
+            console.log("Fetch Successful");
+            console.log("Response:", user);
             resolve(user);
           });
         });
@@ -103,7 +107,11 @@ const RootQuery = new GraphQLObjectType({
       args: { id: { type: GraphQLString } },
       resolve(parent, args) {
         return new Promise((resolve, reject) => {
+          console.log("Inside GraphQL Resolve for --> Property");
+          console.log("Args", args);
           PropertyModel.findOne({ _id: args.id }).then(property => {
+            console.log("Fetch Successful");
+            console.log("Response:", property);
             resolve(property);
           });
         });
@@ -113,7 +121,12 @@ const RootQuery = new GraphQLObjectType({
       type: new GraphQLList(PropertyType),
       resolve(parent, args) {
         return new Promise((resolve, reject) => {
+          console.log("Inside GraphQL Resolve for --> Properties");
+          console.log("Args", args);
+
           PropertyModel.find({}).then(properties => {
+            console.log("Fetch Successful");
+            console.log("Response:", properties);
             resolve(properties);
           });
         });
@@ -129,6 +142,9 @@ const RootQuery = new GraphQLObjectType({
       },
       resolve(parent, args) {
         return new Promise((resolve, reject) => {
+          console.log("Inside GraphQL Resolve for --> Properties Where");
+          console.log("Args", args);
+
           var startDate = moment(args.startDate, "MM/DD/YYYY").toDate();
           var endDate = moment(args.endDate, "MM/DD/YYYY").toDate();
           var where = args.where;
@@ -153,6 +169,8 @@ const RootQuery = new GraphQLObjectType({
               $gte: people
             }
           }).then(properties => {
+            console.log("Fetch Successful");
+            console.log("Response:", properties);
             resolve(properties);
           });
         });
@@ -165,7 +183,12 @@ const RootQuery = new GraphQLObjectType({
       },
       resolve(parent, args) {
         return new Promise((resolve, reject) => {
+          console.log("Inside GraphQL Resolve for --> Properties Of Owner");
+          console.log("Args", args);
+
           PropertyModel.find({ email: args.email }).then(properties => {
+            console.log("Fetch Successful");
+            console.log("Response:", properties);
             resolve(properties);
           });
         });
@@ -177,14 +200,17 @@ const RootQuery = new GraphQLObjectType({
         email: { type: GraphQLString }
       },
       resolve(parent, args) {
-         return new Promise((resolve, reject) => {
-            BookingModel.find({ travelleremail: args.email }).then(
-          bookings => {
+        return new Promise((resolve, reject) => {
+          console.log("Inside GraphQL Resolve for --> Traveller Bookings");
+          console.log("Args", args);
+
+          BookingModel.find({ travelleremail: args.email }).then(bookings => {
+            console.log("Fetch Successful");
+            console.log("Response:", bookings);
             resolve(bookings);
-          }
-        );
-         })
-        }
+          });
+        });
+      }
     },
     ownerBookings: {
       type: new GraphQLList(BookingType),
@@ -193,8 +219,13 @@ const RootQuery = new GraphQLObjectType({
       },
       resolve(parent, args) {
         return new Promise((resolve, reject) => {
+          console.log("Inside GraphQL Resolve for --> Owner Bookings");
+          console.log("Args", args);
+
           BookingModel.find({ propertyowneremail: args.email }).then(
             bookings => {
+              console.log("Fetch Successful");
+              console.log("Response:", bookings);
               resolve(bookings);
             }
           );
@@ -208,7 +239,12 @@ const RootQuery = new GraphQLObjectType({
       },
       resolve(parent, args) {
         return new Promise((resolve, reject) => {
+          console.log("Inside GraphQL Resolve for --> Booking");
+          console.log("Args", args);
+
           BookingModel.find({ _id: args.id }).then(booking => {
+            console.log("Fetch Successful");
+            console.log("Response:", booking);
             resolve(booking);
           });
         });
@@ -216,8 +252,6 @@ const RootQuery = new GraphQLObjectType({
     }
   }
 });
-
-console.log("Inside API Request: /createNewBooking");
 
 const Mutation = new GraphQLObjectType({
   name: "Mutation",
@@ -237,11 +271,13 @@ const Mutation = new GraphQLObjectType({
         propertyname: { type: GraphQLString }
       },
       resolve(parent, args) {
-        var startDate =  new Date(Number(args.bookingfrom));
-        var endDate =  new Date(Number(args.bookingto));
-        // console.log("Start Date ",startDate);
-        // console.log("End Date", args.bookingto);
+        var startDate = new Date(Number(args.bookingfrom));
+        var endDate = new Date(Number(args.bookingto));
+
         return new Promise((resolve, reject) => {
+          console.log("Inside GraphQL Mutation Resolve  for --> Booking");
+          console.log("Args", args);
+
           BookingModel.create({
             bookingfrom: startDate,
             bookingto: endDate,
@@ -254,6 +290,8 @@ const Mutation = new GraphQLObjectType({
             city: args.city,
             propertyname: args.propertyname
           }).then(book => {
+            console.log("Fetch Successful");
+            console.log("Response:", book);
             resolve(book);
           });
         });
@@ -276,6 +314,9 @@ const Mutation = new GraphQLObjectType({
       },
       resolve(parent, args) {
         return new Promise((resolve, reject) => {
+          console.log("Inside GraphQL Mutation Resolve  for --> Updating User");
+          console.log("Args", args);
+
           const user = UserModel.findOneAndUpdate(
             { email: args.email },
             {
@@ -291,6 +332,8 @@ const Mutation = new GraphQLObjectType({
               propertyname: args.propertyname
             }
           ).then(user => {
+            console.log("Fetch Successful");
+            console.log("Response:", user);
             resolve(user);
           });
         });
@@ -302,4 +345,27 @@ const Mutation = new GraphQLObjectType({
 module.exports = new GraphQLSchema({
   query: RootQuery,
   mutation: Mutation
+});
+
+import { GraphQLSchema, GraphQLObjectType, GraphQLBoolean } from "graphql";
+import { GraphQLUpload } from "graphql-upload";
+
+export const schema = new GraphQLSchema({
+  mutation: new GraphQLObjectType({
+    name: "Mutation",
+    fields: {
+      uploadImage: {
+        type: GraphQLBoolean,
+        args: {
+          image: { type: GraphQLUpload }
+        },
+        async resolve(parent, { image }) {
+          const { filename, mimetype, createReadStream } = await image;
+          const stream = createReadStream();
+          //Store File using any desired library and Add Resolve inside Promise.
+          return true;
+        }
+      }
+    }
+  })
 });

@@ -50,10 +50,10 @@ class OwnerBookingPanel extends Component {
             <small>Booking</small>
             <DateRangePicker
               startDate={moment(
-                new Date(this.props.currentBooking.booking.bookingfrom)
+                new Date(this.props.currentBooking.booking[0].bookingfrom)
               )}
               endDate={moment(
-                new Date(this.props.currentBooking.booking.bookingto)
+                new Date(this.props.currentBooking.booking[0].bookingto)
               )}
               readOnly={true}
               startDateId="your_unique_start_date_id"

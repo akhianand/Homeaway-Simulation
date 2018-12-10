@@ -5,6 +5,7 @@ const router = express.Router();
 const UserModel = require("../model/usermodel");
 
 router.post("/signup", async (req, res, next) => {
+  console.log("Inside SignUp REST Route");
   passport.authenticate("signup", { session: false }, (err, user, info) => {
     if (err || !user) {
       res.status(400).json({
@@ -41,6 +42,7 @@ router.post("/signup", async (req, res, next) => {
 
 
 router.post("/login", async (req, res, next) => {
+  console.log("Inside Login REST Route");
   passport.authenticate("login", async (err, user, info) => {
     try {
       if (err || !user) {
